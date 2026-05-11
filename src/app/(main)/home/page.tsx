@@ -8,153 +8,138 @@ import {
   Heart, 
   Share, 
   MoreHorizontal,
-  BadgeCheck,
+  Stethoscope,
   Bookmark,
-  Stethoscope
+  Users,
+  Activity,
+  Plus
 } from "lucide-react";
 import { Button } from "@/components/ui";
 import { useState } from "react";
 
 export default function HomePage() {
-  const [activeTab, setActiveTab] = useState("foryou");
-
   return (
     <div style={{ paddingBottom: "5rem" }}>
-      {/* Feed Selection Header */}
-      <div className="header-sticky">
-        <h1 className="text-xl font-bold tracking-tight">Home Feed</h1>
-        <div className="flex gap-4">
-          <button 
-            onClick={() => setActiveTab("foryou")}
-            className={`text-sm font-bold ${activeTab === "foryou" ? "text-blue-600" : "text-slate-400"}`}
-          >
-            Recommended
-          </button>
-          <button 
-            onClick={() => setActiveTab("following")}
-            className={`text-sm font-bold ${activeTab === "following" ? "text-blue-600" : "text-slate-400"}`}
-          >
-            Following
-          </button>
+      <header className="page-header">
+        <h1 className="title-xl">Medical Feed</h1>
+        <div className="flex gap-2">
+           <button className="avatar-soft" style={{ width: "2.5rem", height: "2.5rem", borderRadius: "0.75rem" }}>
+             <Plus size={18} />
+           </button>
         </div>
-      </div>
+      </header>
 
-      {/* Post Creator Card */}
-      <div className="post-creator-card">
-        <div className="flex gap-4">
-          <div className="avatar-clean">JD</div>
+      {/* Post Creator */}
+      <div className="post-creator-minimal">
+        <div className="flex gap-5">
+          <div className="avatar-soft">JD</div>
           <div style={{ flex: 1 }}>
             <textarea 
-              placeholder="Share a medical case or clinical insight..." 
+              placeholder="What clinical case or doubt do you have today?" 
               className="textarea-ghost"
               rows={2}
-              style={{ fontSize: "1.1rem", marginBottom: "0.5rem" }}
+              style={{ fontSize: "1.25rem", fontWeight: 500 }}
             />
-            <div className="flex items-center justify-between pt-3" style={{ borderTop: "1px solid var(--border)" }}>
-              <div className="flex gap-3">
-                <button className="flex items-center gap-1 text-slate-500 hover:text-blue-600 transition-colors">
+            <div className="flex items-center justify-between mt-6">
+              <div className="flex gap-4">
+                <button className="flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-colors">
                   <ImageIcon size={20} />
-                  <span className="text-xs font-bold">Image</span>
+                  <span className="text-sm font-bold">Clinical Image</span>
                 </button>
-                <button className="flex items-center gap-1 text-slate-500 hover:text-blue-600 transition-colors">
-                  <HelpCircle size={20} />
-                  <span className="text-xs font-bold">Doubt</span>
+                <button className="flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-colors">
+                  <Activity size={20} />
+                  <span className="text-sm font-bold">Case Study</span>
                 </button>
               </div>
-              <Button style={{ borderRadius: "var(--radius-md)", padding: "0.5rem 1.5rem", fontWeight: 700 }}>Share Case</Button>
+              <Button style={{ borderRadius: "1rem", padding: "0.75rem 2rem", fontWeight: 800 }}>Share</Button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Posts Feed */}
+      {/* Feed Content */}
       <motion.div 
-        layout
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="flex-col"
       >
         <PostCard 
           author="Dr. James Wilson" 
-          username="jwilson_cardio"
           specialty="Cardiologist"
-          verified={true}
-          content="Just completed a successful TAVR procedure. It's amazing how much minimally invasive techniques have evolved in the last decade. 🫀\n\nModern cardiology is truly at its peak! #Cardiology #Surgery #MedTwitter"
-          time="2h"
+          content="Just completed a successful TAVR procedure. It's amazing how much minimally invasive techniques have evolved in the last decade. 🫀\n\nModern cardiology is truly at its peak! #Cardiology #Surgery"
+          time="2h ago"
           likes="1.2k"
           comments="45"
           image="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=1000"
         />
         
         <PostCard 
-          author="Sarah Smith" 
-          username="sarah_med2026"
-          specialty="MBBS Final Year"
-          verified={false}
-          type="DOUBT"
-          content="Can someone help me differentiate between the various types of cardiomyopathy on an echocardiogram? I'm finding the restrictive type a bit confusing. 📚 #MedicalDoubt #Cardiology"
-          time="5h"
-          likes="850"
-          comments="128"
+          author="Dr. Sarah Chen" 
+          specialty="Neurologist"
+          content="New study out on neuroplasticity in stroke recovery. The findings suggest that early intervention (within 24-48 hours) is even more critical than previously thought. 🧠"
+          time="8h ago"
+          likes="2.4k"
+          comments="92"
         />
 
         <PostCard 
-          author="Dr. Sarah Chen" 
-          username="schen_neuro"
-          specialty="Neurologist"
-          verified={true}
-          content="New study out on neuroplasticity in stroke recovery. The findings suggest that early intervention (within 24-48 hours) is even more critical than previously thought. 🧠"
-          time="8h"
-          likes="2.4k"
-          comments="92"
+          author="Sarah Smith" 
+          specialty="MBBS Student"
+          type="DOUBT"
+          content="Can someone help me differentiate between the various types of cardiomyopathy on an echocardiogram? I'm finding the restrictive type a bit confusing. 📚"
+          time="1d ago"
+          likes="850"
+          comments="128"
         />
       </motion.div>
     </div>
   );
 }
 
-function PostCard({ author, username, specialty, verified, content, time, likes, comments, type, image }: any) {
+function PostCard({ author, specialty, content, time, likes, comments, type, image }: any) {
   return (
-    <div className="post-card-clean">
-      <div className="flex gap-4">
-        <div className="avatar-clean">
+    <div className="premium-card">
+      <div className="flex gap-5">
+        <div className="avatar-soft">
           {author.split(" ").map((n: string) => n[0]).join("")}
         </div>
         
         <div style={{ flex: 1 }}>
           <div className="flex justify-between items-start">
             <div>
-              <div className="flex items-center gap-1">
-                <span className="font-bold text-slate-900">{author}</span>
-                {verified && <BadgeCheck size={16} color="#3b82f6" fill="#3b82f6" />}
-                <span className="text-slate-400 text-sm ml-1">@{username} · {time}</span>
-              </div>
-              <p className="text-blue-600 font-bold" style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>{specialty}</p>
+              <h4 className="font-bold text-lg text-slate-900">{author}</h4>
+              <p className="text-blue-600 font-bold" style={{ fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>{specialty} · {time}</p>
             </div>
-            <button className="text-slate-400 hover:text-slate-600"><MoreHorizontal size={20} /></button>
+            <button className="text-slate-300 hover:text-slate-500 transition-colors"><MoreHorizontal size={22} /></button>
           </div>
 
           {type === "DOUBT" && (
-            <div className="mt-2 px-3 py-1 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-full text-xs font-bold w-fit">
+            <div className="mt-3 px-4 py-1 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold w-fit border border-emerald-100">
               Medical Doubt
             </div>
           )}
 
-          <p className="text-slate-800 leading-relaxed my-4" style={{ fontSize: "1rem", whiteSpace: "pre-wrap" }}>
+          <p className="text-slate-700 leading-relaxed my-5" style={{ fontSize: "1.1rem", whiteSpace: "pre-wrap", fontWeight: 400 }}>
             {content}
           </p>
 
           {image && (
-            <div className="rounded-xl overflow-hidden border border-slate-200 mb-4 h-64">
-              <img src={image} alt="Medical visual" className="w-full h-full object-cover" />
+            <div style={{ borderRadius: "1.5rem", overflow: "hidden", marginBottom: "1.5rem", height: "20rem", boxShadow: "0 10px 30px rgba(0,0,0,0.1)" }}>
+              <img src={image} alt="Medical visual" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             </div>
           )}
 
-          <div className="flex gap-8 pt-2 border-top border-slate-100">
-            <PostAction Icon={MessageCircle} count={comments} />
-            <PostAction Icon={Heart} count={likes} />
-            <PostAction Icon={Bookmark} />
-            <PostAction Icon={Share} />
+          <div className="flex gap-10 pt-4" style={{ borderTop: "1px solid var(--border)" }}>
+            <button className="flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-all">
+              <MessageCircle size={22} />
+              <span className="text-sm font-bold">{comments}</span>
+            </button>
+            <button className="flex items-center gap-2 text-slate-400 hover:text-red-500 transition-all">
+              <Heart size={22} />
+              <span className="text-sm font-bold">{likes}</span>
+            </button>
+            <button className="text-slate-400 hover:text-blue-600 transition-all ml-auto"><Bookmark size={22} /></button>
+            <button className="text-slate-400 hover:text-blue-600 transition-all"><Share size={22} /></button>
           </div>
         </div>
       </div>
