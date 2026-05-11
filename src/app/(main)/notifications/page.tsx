@@ -15,7 +15,7 @@ export default function NotificationsPage() {
   return (
     <div style={{ paddingBottom: "5rem" }}>
       {/* Notifications Tabs */}
-      <div className="flex" style={{ borderBottom: "1px solid var(--border)", sticky: "top", backgroundColor: "white", zIndex: 10 }}>
+      <div className="flex" style={{ borderBottom: "1px solid var(--border)", position: "sticky", top: "4rem", backgroundColor: "white", zIndex: 10 }}>
         <button style={{ flex: 1, padding: "1rem", fontWeight: 700, borderBottom: "4px solid var(--primary)" }}>All</button>
         <button style={{ flex: 1, padding: "1rem", fontWeight: 700, color: "var(--text-muted)" }}>Verified</button>
         <button style={{ flex: 1, padding: "1rem", fontWeight: 700, color: "var(--text-muted)" }}>Mentions</button>
