@@ -4,16 +4,17 @@
   /* Colors */
   --primary: #0066ff;
   --primary-hover: #0052cc;
-  --primary-light: #e6f0ff;
+  --primary-light: #f0f7ff;
   --secondary: #64748b;
   --bg: #ffffff;
-  --bg-alt: #f8fafc;
+  --bg-alt: #f1f5f9;
   --text: #0f172a;
   --text-muted: #64748b;
-  --border: #e2e8f0;
+  --border: #eef2f6;
   --white: #ffffff;
   --success: #10b981;
   --error: #ef4444;
+  --accent: #8b5cf6;
   
   /* Gradients */
   --medical-gradient: linear-gradient(135deg, #0066ff 0%, #00a3ff 100%);
@@ -292,4 +293,217 @@ input, textarea {
   font-size: 0.875rem;
   color: var(--text-muted);
   font-weight: 700;
+}
+
+/* App Shell Layout */
+.app-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 275px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  border-right: 1px solid var(--border);
+  padding: 1rem 1.5rem 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.main-content {
+  flex: 1;
+  max-width: 600px;
+  border-right: 1px solid var(--border);
+  min-height: 100vh;
+}
+
+.right-panel {
+  flex: 1;
+  padding: 1.5rem 2rem;
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .right-panel { display: flex; flex-direction: column; gap: 1.5rem; }
+}
+
+/* Nav Links */
+.nav-link {
+  display: flex;
+  items-center;
+  gap: 1.25rem;
+  padding: 0.875rem 1.25rem;
+  border-radius: var(--radius-full);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+.nav-link:hover {
+  background-color: var(--bg-alt);
+}
+
+.nav-link.active {
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.nav-link.active i, .nav-link.active svg {
+  color: var(--primary);
+}
+
+/* Header */
+.header-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Post Card */
+.post-card {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.post-card:hover {
+  background-color: rgba(248, 250, 252, 0.5);
+}
+
+.post-creator {
+  padding: 1.5rem;
+  border-bottom: 8px solid var(--border);
+  display: flex;
+  gap: 1rem;
+}
+
+.textarea-ghost {
+  width: 100%;
+  border: none;
+  resize: none;
+  padding: 0.5rem 0;
+  font-size: 1.25rem;
+  color: var(--text);
+}
+
+.textarea-ghost::placeholder {
+  color: var(--text-muted);
+}
+
+/* Avatars */
+.avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--radius-full);
+  background: var(--bg-alt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+/* Post Actions */
+.post-action {
+  display: flex;
+  items-center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  padding: 0.5rem;
+  border-radius: var(--radius-full);
+  transition: var(--transition);
+}
+
+.post-action:hover {
+  background-color: var(--primary-light);
+  color: var(--primary);
+}
+
+.post-action.like:hover {
+  background-color: #fef2f2;
+  color: #ef4444;
+}
+
+/* Right Sidebar Panels */
+.panel-card {
+  background-color: var(--bg-alt);
+  border-radius: var(--radius-xl);
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+}
+
+.gradient-card {
+  background: var(--medical-gradient);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  color: var(--white);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Chats */
+.chat-container {
+  display: flex;
+  height: calc(100vh - 4rem);
+}
+
+.chat-sidebar {
+  width: 350px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-bubble {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-xl);
+  max-width: 80%;
+  font-size: 0.9375rem;
+  margin-bottom: 0.5rem;
+}
+
+.chat-bubble-me {
+  background-color: var(--primary);
+  color: var(--white);
+  align-self: flex-end;
+  border-bottom-right-radius: 0.25rem;
+}
+
+.chat-bubble-them {
+  background-color: var(--bg-alt);
+  color: var(--text);
+  align-self: flex-start;
+  border-bottom-left-radius: 0.25rem;
+}
+
+/* Mobile Nav */
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4rem;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 50;
+}
+
+@media (min-width: 1024px) {
+  .mobile-bottom-nav { display: none; }
 }

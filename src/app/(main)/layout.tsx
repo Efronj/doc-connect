@@ -136,6 +136,15 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           </div>
         </aside>
 
+        {/* Mobile Bottom Navigation */}
+        <nav className="mobile-bottom-nav">
+          <Link href="/home" className={pathname === "/home" ? "text-blue-600" : "text-slate-400"}><Home size={24} /></Link>
+          <Link href="/search" className={pathname === "/search" ? "text-blue-600" : "text-slate-400"}><Search size={24} /></Link>
+          <div className="icon-box" style={{ width: "3.5rem", height: "3.5rem", borderRadius: "50%", marginTop: "-2rem", boxShadow: "var(--shadow-lg)" }}><Plus size={28} /></div>
+          <Link href="/notifications" className={pathname === "/notifications" ? "text-blue-600" : "text-slate-400"}><Bell size={24} /></Link>
+          <Link href="/profile/johndoe_md" className={pathname.startsWith("/profile") ? "text-blue-600" : "text-slate-400"}><User size={24} /></Link>
+        </nav>
+
       </div>
       <style jsx>{`
         .hover-bg-alt:hover { background-color: var(--bg-alt); }
