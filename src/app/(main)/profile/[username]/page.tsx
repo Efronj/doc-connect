@@ -71,17 +71,21 @@ export default function ProfilePage({ params: paramsPromise }: { params: Promise
       <div className="flex" style={{ justifyContent: "flex-end", padding: "1.5rem", gap: "1rem", marginTop: "1.5rem" }}>
         {isOwnProfile ? (
           <Link href="/settings">
-            <Button variant="outline" className="px-8" style={{ borderRadius: "1.5rem", fontWeight: 900 }}>
-              <Settings size={20} className="mr-2" /> Edit Profile
+            <Button variant="outline" className="rounded-full px-8 border-slate-200">
+              <Settings size={18} style={{ marginRight: "0.5rem" }} /> Edit Profile
             </Button>
           </Link>
         ) : (
-          <>
-            <Button variant="outline" style={{ borderRadius: "1.25rem", width: "3.5rem", height: "3.5rem", padding: 0 }}>
-              <Mail size={22} />
+          <div className="flex gap-3">
+            <Button className="rounded-full px-8 shadow-premium">
+              Follow Practitioner
             </Button>
-            <Button className="px-8 py-4" style={{ borderRadius: "1.5rem", fontWeight: 900 }}>Follow Doctor</Button>
-          </>
+            <Link href={`/messages?user=${user?.name}`}>
+              <Button variant="outline" className="rounded-full px-8 border-blue-600 text-blue-600 hover:bg-blue-50">
+                <Mail size={18} style={{ marginRight: "0.5rem" }} /> Message
+              </Button>
+            </Link>
+          </div>
         )}
       </div>
 

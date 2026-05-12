@@ -15,20 +15,39 @@ import {
   User
 } from "lucide-react";
 import { Button } from "@/components/ui";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { io } from "socket.io-client";
+import { useSearchParams } from "next/navigation";
 
 const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001";
 
-export default function MessagesPage() {
+function MessagesContent() {
   const { data: session } = useSession();
-  const [conversations, setConversations] = useState<any[]>([]);
+  const searchParams = useSearchParams();
+  const startUser = searchParams.get("user");
+  
+  const [conversations, setConversations] = useState<any[]>([
+    { id: "gen-chat", name: "Medical General Chat", lastMessage: "Welcome to the network!", time: "Now" }
+  ]);
   const [activeChat, setActiveChat] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [inputText, setInputText] = useState("");
   const [socket, setSocket] = useState<any>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (startUser) {
+      const existing = conversations.find(c => c.name === startUser);
+      if (existing) {
+        setActiveChat(existing);
+      } else {
+        const newConv = { id: `chat-${Date.now()}`, name: startUser, lastMessage: "Start a conversation...", time: "Now" };
+        setConversations(prev => [newConv, ...prev]);
+        setActiveChat(newConv);
+      }
+    }
+  }, [startUser]);
 
   useEffect(() => {
     const newSocket = io(SOCKET_URL);
@@ -181,21 +200,29 @@ export default function MessagesPage() {
   );
 }
 
+export default function MessagesPage() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center font-black text-slate-400">CONNECTING TO NETWORK...</div>}>
+      <MessagesContent />
+    </Suspense>
+  );
+}
+
 function ChatListItem({ name, lastMessage, time, active, onClick }: any) {
   return (
     <div 
       className={`flex gap-3 p-4 transition-all cursor-pointer ${active ? 'bg-blue-50 border-l-4 border-blue-600' : 'hover:bg-slate-50'}`} 
       onClick={onClick}
     >
-      <div className="avatar" style={{ width: "3rem", height: "3rem" }}>
+      <div className="avatar-soft shrink-0" style={{ width: "3rem", height: "3rem" }}>
         {name[0]}
       </div>
       <div style={{ flex: 1, overflow: "hidden" }}>
-        <div className="flex justify-between">
-          <h4 className="font-bold text-sm truncate">{name}</h4>
-          <span className="text-xs text-slate-400">{time}</span>
+        <div className="flex justify-between items-center mb-1">
+          <h4 className="font-black text-slate-900 text-sm truncate">{name}</h4>
+          <span className="text-[10px] text-slate-400 font-bold uppercase">{time}</span>
         </div>
-        <p className="text-sm truncate text-slate-500">
+        <p className="text-xs truncate text-slate-500 font-medium">
           {lastMessage || "No messages yet"}
         </p>
       </div>
