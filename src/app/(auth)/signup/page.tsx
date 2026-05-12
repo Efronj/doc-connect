@@ -7,17 +7,48 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+import axios from "axios";
+import { toast } from "react-hot-toast";
+import { signIn } from "next-auth/react";
+
 export default function SignupPage() {
   const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    username: "",
+    password: "",
+    confirmPassword: ""
+  });
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (formData.password !== formData.confirmPassword) {
+      return toast.error("Passwords do not match");
+    }
+
     setLoading(true);
-    setTimeout(() => {
+
+    try {
+      await axios.post("/api/register", formData);
+      toast.success("Account created successfully!");
+      
+      const callback = await signIn("credentials", {
+        email: formData.email,
+        password: formData.password,
+        redirect: false
+      });
+
+      if (callback?.ok) {
+        router.push("/onboarding");
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data || "Something went wrong");
+    } finally {
       setLoading(false);
-      router.push("/onboarding");
-    }, 1500);
+    }
   };
 
   return (
@@ -81,16 +112,49 @@ export default function SignupPage() {
           </div>
 
           <form onSubmit={handleSubmit}>
-            <Input label="Full Name" placeholder="Dr. Sarah Johnson" required />
+            <Input 
+              label="Full Name" 
+              placeholder="Dr. Sarah Johnson" 
+              required 
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            />
             
             <div className="grid grid-cols-2 gap-4">
-              <Input label="Email Address" type="email" placeholder="sarah@hospital.com" required />
-              <Input label="Username" placeholder="sarah_md" required />
+              <Input 
+                label="Email Address" 
+                type="email" 
+                placeholder="sarah@hospital.com" 
+                required 
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              />
+              <Input 
+                label="Username" 
+                placeholder="sarah_md" 
+                required 
+                value={formData.username}
+                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <Input label="Password" type="password" placeholder="••••••••" required />
-              <Input label="Confirm Password" type="password" placeholder="••••••••" required />
+              <Input 
+                label="Password" 
+                type="password" 
+                placeholder="••••••••" 
+                required 
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              />
+              <Input 
+                label="Confirm Password" 
+                type="password" 
+                placeholder="••••••••" 
+                required 
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+              />
             </div>
             
             <div className="py-4">

@@ -7,17 +7,39 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { signIn } from "next-auth/react";
+import { toast } from "react-hot-toast";
+
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
+
+    try {
+      const callback = await signIn("credentials", {
+        email,
+        password,
+        redirect: false
+      });
+
+      if (callback?.ok) {
+        toast.success("Welcome back, Doctor!");
+        router.push("/home");
+      }
+
+      if (callback?.error) {
+        toast.error(callback.error);
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
       setLoading(false);
-      router.push("/home");
-    }, 1500);
+    }
   };
 
   return (
@@ -95,6 +117,8 @@ export default function LoginPage() {
               label="Professional Email" 
               placeholder="name@hospital.com" 
               required 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               style={{ padding: "1.25rem", borderRadius: "1.25rem" }}
             />
             
@@ -107,6 +131,8 @@ export default function LoginPage() {
                 type="password" 
                 placeholder="••••••••" 
                 required 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 style={{ padding: "1.25rem", borderRadius: "1.25rem" }}
               />
             </div>

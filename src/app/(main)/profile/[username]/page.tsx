@@ -16,64 +16,60 @@ export default function ProfilePage({ params }: { params: { username: string } }
   return (
     <div style={{ paddingBottom: "5rem" }}>
       {/* Cover Image */}
-      <div style={{ height: "12rem", background: "var(--medical-gradient)", position: "relative" }}>
-        <div style={{ position: "absolute", bottom: "-4rem", left: "1.5rem" }}>
-          <div className="avatar shadow-xl" style={{ width: "8rem", height: "8rem", border: "4px solid white", fontSize: "2rem", fontWeight: 900 }}>
-            JD
+      <div style={{ height: "14rem", background: "var(--medical-gradient)", position: "relative" }}>
+        <div style={{ position: "absolute", bottom: "-5rem", left: "2rem" }}>
+          <div className="avatar-soft shadow-2xl" style={{ width: "10rem", height: "10rem", border: "6px solid white", fontSize: "2.5rem", borderRadius: "2rem" }}>
+            {params.username?.[0]?.toUpperCase() || "U"}
           </div>
         </div>
       </div>
 
       {/* Profile Actions */}
-      <div className="flex" style={{ justifyContent: "flex-end", padding: "1.5rem", gap: "0.75rem" }}>
-        <Button variant="outline" style={{ borderRadius: "50%", width: "2.5rem", height: "2.5rem", padding: 0 }}>
-          <MoreHorizontal size={20} />
+      <div className="flex" style={{ justifyContent: "flex-end", padding: "1.5rem", gap: "1rem", marginTop: "1rem" }}>
+        <Button variant="outline" style={{ borderRadius: "1.25rem", width: "3rem", height: "3rem", padding: 0 }}>
+          <MoreHorizontal size={22} />
         </Button>
-        <Button variant="outline" style={{ borderRadius: "50%", width: "2.5rem", height: "2.5rem", padding: 0 }}>
-          <Mail size={20} />
+        <Button variant="outline" style={{ borderRadius: "1.25rem", width: "3rem", height: "3rem", padding: 0 }}>
+          <Mail size={22} />
         </Button>
-        <Button style={{ borderRadius: "2rem", padding: "0.5rem 1.5rem", fontWeight: 900 }}>Follow</Button>
+        <Button className="px-8 py-4" style={{ borderRadius: "1.5rem", fontWeight: 900 }}>Follow Professional</Button>
       </div>
 
       {/* Profile Info */}
-      <div style={{ padding: "0 1.5rem", marginTop: "0.5rem" }}>
-        <div className="flex items-center gap-1">
-          <h1 className="text-3xl font-black text-slate-900">Dr. John Doe</h1>
-          <BadgeCheck size={24} color="#3b82f6" fill="#3b82f6" />
+      <div style={{ padding: "0 2rem", marginTop: "1rem" }}>
+        <div className="flex items-center gap-2">
+          <h1 className="text-4xl font-black text-slate-900">@{params.username}</h1>
+          <BadgeCheck size={28} className="text-blue-600" />
         </div>
-        <p className="text-slate-500">@{params.username || "johndoe_md"}</p>
+        <p className="text-lg text-slate-500 font-medium">Medical Professional</p>
         
-        <p style={{ marginTop: "1rem", fontSize: "1.125rem", color: "var(--text)", lineHeight: 1.6, maxWidth: "42rem" }}>
-          Senior Cardiologist at Johns Hopkins Hospital. Specialized in interventional cardiology and preventive medicine. Passionate about medical education and AI in healthcare. 🩺❤️
+        <p className="text-slate-600 leading-relaxed mt-6 text-lg max-w-2xl">
+          This professional profile has not yet been fully populated. Follow to stay updated with clinical insights and medical cases shared by this user.
         </p>
 
-        <div className="flex" style={{ flexWrap: "wrap", gap: "1.5rem", marginTop: "1rem", color: "var(--text-muted)", fontSize: "0.875rem" }}>
-          <div className="flex items-center gap-1">
-            <Stethoscope size={16} />
-            <span>Cardiologist</span>
+        <div className="flex" style={{ flexWrap: "wrap", gap: "2rem", marginTop: "2rem", color: "var(--text-muted)", fontSize: "0.9rem" }}>
+          <div className="flex items-center gap-2">
+            <Stethoscope size={18} />
+            <span className="font-bold">Medical Specialty</span>
           </div>
-          <div className="flex items-center gap-1">
-            <MapPin size={16} />
-            <span>Baltimore, MD</span>
+          <div className="flex items-center gap-2">
+            <MapPin size={18} />
+            <span className="font-bold">Location</span>
           </div>
-          <div className="flex items-center gap-1">
-            <LinkIcon size={16} />
-            <a href="#" className="text-blue-600">johndoe.md</a>
-          </div>
-          <div className="flex items-center gap-1">
-            <Calendar size={16} />
-            <span>Joined May 2024</span>
+          <div className="flex items-center gap-2">
+            <Calendar size={18} />
+            <span>Joined DoctorNet recently</span>
           </div>
         </div>
 
-        <div className="flex gap-6 mt-6">
-          <div className="flex items-center gap-1">
-            <span className="font-black text-slate-900">12.4k</span>
-            <span className="text-slate-500">Followers</span>
+        <div className="flex gap-8 mt-8">
+          <div className="flex items-center gap-2">
+            <span className="font-black text-2xl text-slate-900">0</span>
+            <span className="text-slate-500 font-bold">Followers</span>
           </div>
-          <div className="flex items-center gap-1">
-            <span className="font-black text-slate-900">842</span>
-            <span className="text-slate-500">Following</span>
+          <div className="flex items-center gap-2">
+            <span className="font-black text-2xl text-slate-900">0</span>
+            <span className="text-slate-500 font-bold">Following</span>
           </div>
         </div>
       </div>

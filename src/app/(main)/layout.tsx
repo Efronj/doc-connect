@@ -18,15 +18,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui";
 
+import { useSession, signOut } from "next-auth/react";
+
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   const navItems = [
     { icon: Home, label: "Home", href: "/home" },
     { icon: Search, label: "Explore", href: "/search" },
     { icon: Bell, label: "Notifications", href: "/notifications" },
     { icon: MessageSquare, label: "Messages", href: "/messages" },
-    { icon: User, label: "Profile", href: "/profile/johndoe_md" },
+    { icon: User, label: "Profile", href: session?.user?.name ? `/profile/${session.user.name.toLowerCase().replace(/\s+/g, '')}` : "/profile" },
   ];
 
   return (
@@ -41,7 +44,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             </div>
             <span className="text-2xl font-black tracking-tighter">DoctorNet</span>
           </Link>
-
+ 
           <nav className="flex-col">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
@@ -53,23 +56,32 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
               );
             })}
           </nav>
-
+ 
           <Button className="w-full py-5 text-lg hidden-mobile shadow-premium" style={{ borderRadius: "1.5rem" }}>
             <Plus size={20} style={{ marginRight: "0.5rem" }} /> Share Case
           </Button>
         </div>
-
+ 
         {/* User Profile Mini */}
-        <div className="mt-auto p-4 flex items-center justify-between cursor-pointer hover-bg-subtle" style={{ borderRadius: "1.5rem", transition: "var(--transition)" }}>
-          <div className="flex items-center gap-3">
-            <div className="avatar-soft" style={{ width: "2.75rem", height: "2.75rem", fontSize: "0.8rem" }}>JD</div>
-            <div className="hidden-mobile">
-              <h4 className="font-bold text-sm">Dr. John Doe</h4>
-              <p className="text-slate-400" style={{ fontSize: "0.75rem" }}>Cardiologist</p>
+        {session && (
+          <div 
+            onClick={() => { if(confirm("Do you want to sign out?")) signOut(); }}
+            className="mt-auto p-4 flex items-center justify-between cursor-pointer hover-bg-subtle" 
+            style={{ borderRadius: "1.5rem", transition: "var(--transition)" }}
+          >
+            <div className="flex items-center gap-3">
+              <div className="avatar-soft" style={{ width: "2.75rem", height: "2.75rem", fontSize: "0.8rem" }}>
+                {session.user?.name?.[0] || "U"}
+              </div>
+              <div className="hidden-mobile">
+                <h4 className="font-bold text-sm">{session.user?.name}</h4>
+                {/* @ts-ignore */}
+                <p className="text-slate-400" style={{ fontSize: "0.75rem" }}>{session.user?.specialty || "Medical Professional"}</p>
+              </div>
             </div>
+            <MoreHorizontal size={18} className="text-slate-400 hidden-mobile" />
           </div>
-          <MoreHorizontal size={18} className="text-slate-400 hidden-mobile" />
-        </div>
+        )}
       </aside>
 
       {/* Main Content Area */}
@@ -122,7 +134,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           <Plus size={26} />
         </div>
         <Link href="/notifications" className={pathname === "/notifications" ? "text-blue-600" : "text-slate-400"}><Bell size={22} /></Link>
-        <Link href="/profile/johndoe_md" className={pathname.startsWith("/profile") ? "text-blue-600" : "text-slate-400"}><User size={22} /></Link>
+        <Link href={session?.user?.name ? `/profile/${session.user.name.toLowerCase().replace(/\s+/g, '')}` : "/profile"} className={pathname.startsWith("/profile") ? "text-blue-600" : "text-slate-400"}><User size={22} /></Link>
       </nav>
 
       <style jsx>{`

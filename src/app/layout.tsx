@@ -12,15 +12,19 @@ export const metadata: Metadata = {
   description: "A professional medical social network for doctors, students, and healthcare professionals.",
 };
 
+import { Providers } from "@/components/Providers";
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} h-full`}>
-      <body className="font-sans">
-        {children}
+    <html lang="en" className={inter.variable}>
+      <body style={{ margin: 0, padding: 0 }}>
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

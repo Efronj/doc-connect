@@ -10,11 +10,16 @@ import {
   Image as ImageIcon,
   Smile,
   Phone,
-  Video
+  Video,
+  MessageSquare
 } from "lucide-react";
 import { Button } from "@/components/ui";
+import { useState } from "react";
 
 export default function MessagesPage() {
+  const [conversations, setConversations] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
   return (
     <div className="chat-container">
       {/* Conversations Sidebar */}
@@ -39,59 +44,30 @@ export default function MessagesPage() {
         </div>
 
         <div style={{ flex: 1, overflowY: "auto" }}>
-          <ChatListItem name="Dr. Sarah Chen" message="Thank you for the referral, John." time="2h" active />
-          <ChatListItem name="Alex Rivera" message="Can we discuss the case at 5?" time="5h" unread />
-          <ChatListItem name="Medical Study Group" message="New research paper attached" time="1d" />
+          {loading ? (
+             <div className="text-center py-10 text-slate-400">Loading chats...</div>
+          ) : conversations.length === 0 ? (
+             <div className="text-center py-20 px-6">
+                <MessageSquare size={40} className="mx-auto mb-4 text-slate-200" />
+                <p className="text-slate-500 text-sm">No conversations yet. Start a new chat with a colleague.</p>
+             </div>
+          ) : (
+            conversations.map((chat, idx) => (
+              <ChatListItem key={idx} {...chat} />
+            ))
+          )}
         </div>
       </aside>
 
       {/* Chat Window Area */}
-      <main className="hidden-mobile" style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        {/* Chat Header */}
-        <header style={{ height: "4rem", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 1.5rem" }}>
-          <div className="flex items-center gap-3">
-            <div className="avatar" style={{ width: "2.5rem", height: "2.5rem" }}>SC</div>
-            <div>
-              <h3 className="font-bold text-sm">Dr. Sarah Chen</h3>
-              <p className="text-xs text-green-500 font-medium">Online</p>
+      <main className="hidden-mobile" style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", backgroundColor: "var(--bg-subtle)" }}>
+         <div className="text-center">
+            <div className="avatar-soft mx-auto mb-6" style={{ width: "5rem", height: "5rem" }}>
+               <MessageSquare size={32} />
             </div>
-          </div>
-          <div className="flex gap-4 text-blue-600">
-            <Phone size={20} />
-            <Video size={20} />
-            <MoreHorizontal size={20} className="text-slate-400" />
-          </div>
-        </header>
-
-        {/* Messages List */}
-        <div style={{ flex: 1, overflowY: "auto", padding: "2rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <div className="chat-bubble chat-bubble-them">
-            Hi John, did you see the lab results for patient #402?
-          </div>
-          <div className="chat-bubble chat-bubble-me">
-            Yes, just reviewing them now. The LDL is still a bit high.
-          </div>
-          <div className="chat-bubble chat-bubble-them">
-            Agreed. We might need to adjust the statin dosage.
-          </div>
-        </div>
-
-        {/* Chat Input */}
-        <div style={{ padding: "1rem 1.5rem", borderTop: "1px solid var(--border)" }}>
-          <div className="flex items-center gap-3 bg-slate-50 p-2 rounded-2xl border border-border">
-            <button className="text-slate-400"><ImageIcon size={20} /></button>
-            <button className="text-slate-400"><Smile size={20} /></button>
-            <input 
-              type="text" 
-              placeholder="Start a new message" 
-              className="textarea-ghost" 
-              style={{ fontSize: "1rem", padding: "0.25rem 0" }}
-            />
-            <button className="icon-box" style={{ width: "2.5rem", height: "2.5rem", padding: "0.5rem" }}>
-              <Send size={18} />
-            </button>
-          </div>
-        </div>
+            <h2 className="text-2xl font-black text-slate-900 mb-2">Your Messages</h2>
+            <p className="text-slate-500">Select a conversation to start messaging.</p>
+         </div>
       </main>
 
       <style jsx>{`

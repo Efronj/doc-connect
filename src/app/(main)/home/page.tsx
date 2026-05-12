@@ -15,47 +15,148 @@ import {
   Plus
 } from "lucide-react";
 import { Button } from "@/components/ui";
-import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { toast } from "react-hot-toast";
 
 export default function HomePage() {
+  const { data: session } = useSession();
+  const [posts, setPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [postContent, setPostContent] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const fetchPosts = async () => {
+    try {
+      const response = await axios.get("/api/posts");
+      setPosts(response.data);
+    } catch (error) {
+      console.error("Failed to fetch posts:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handlePost = async () => {
+    if (!postContent.trim() || !session?.user) return;
+    
+    setIsSubmitting(true);
+    try {
+      let imageUrl = "";
+      if (selectedImage) {
+        setUploading(true);
+        const uploadRes = await axios.post("/api/upload", { image: selectedImage });
+        imageUrl = uploadRes.data.url;
+        setUploading(false);
+      }
+
+      await axios.post("/api/posts", {
+        content: postContent,
+        // @ts-ignore
+        authorId: session.user.id || session.user.uid,
+        media: imageUrl
+      });
+      
+      setPostContent("");
+      setSelectedImage(null);
+      toast.success("Post shared successfully!");
+      fetchPosts();
+    } catch (error) {
+      toast.error("Failed to share post");
+    } finally {
+      setIsSubmitting(false);
+      setUploading(false);
+    }
+  };
+
   return (
     <div style={{ paddingBottom: "5rem" }}>
-      <header className="page-header">
-        <h1 className="title-xl">Medical Feed</h1>
+      <header className="page-header flex items-center justify-between mb-8">
+        <h1 className="text-4xl font-black tracking-tight text-slate-900">Medical Feed</h1>
         <div className="flex gap-2">
-           <button className="avatar-soft" style={{ width: "2.5rem", height: "2.5rem", borderRadius: "0.75rem" }}>
-             <Plus size={18} />
+           <button className="avatar-soft" style={{ width: "2.75rem", height: "2.75rem", borderRadius: "1rem" }}>
+             <Activity size={20} />
            </button>
         </div>
       </header>
 
       {/* Post Creator */}
-      <div className="post-creator-minimal">
-        <div className="flex gap-5">
-          <div className="avatar-soft">JD</div>
-          <div style={{ flex: 1 }}>
-            <textarea 
-              placeholder="What clinical case or doubt do you have today?" 
-              className="textarea-ghost"
-              rows={2}
-              style={{ fontSize: "1.25rem", fontWeight: 500 }}
-            />
-            <div className="flex items-center justify-between mt-6">
-              <div className="flex gap-4">
-                <button className="flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-colors">
-                  <ImageIcon size={20} />
-                  <span className="text-sm font-bold">Clinical Image</span>
-                </button>
-                <button className="flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-colors">
-                  <Activity size={20} />
-                  <span className="text-sm font-bold">Case Study</span>
-                </button>
+      {session && (
+        <div className="post-creator-minimal">
+          <div className="flex gap-5">
+            <div className="avatar-soft">
+              {session.user?.name?.[0] || "U"}
+            </div>
+            <div style={{ flex: 1 }}>
+              <textarea 
+                placeholder="What clinical case or doubt do you have today?" 
+                className="textarea-ghost"
+                rows={2}
+                value={postContent}
+                onChange={(e) => setPostContent(e.target.value)}
+                style={{ fontSize: "1.25rem", fontWeight: 500 }}
+              />
+              
+              {selectedImage && (
+                <div className="relative mt-4 rounded-2xl overflow-hidden group h-64 shadow-lg border border-slate-100">
+                  <img src={selectedImage} alt="Preview" className="w-full h-full object-cover" />
+                  <button 
+                    onClick={() => setSelectedImage(null)}
+                    className="absolute top-3 right-3 bg-black/50 text-white p-2 rounded-full backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <Plus size={20} style={{ transform: "rotate(45deg)" }} />
+                  </button>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between mt-6">
+                <div className="flex gap-4">
+                  <input 
+                    type="file" 
+                    id="image-upload" 
+                    hidden 
+                    accept="image/*" 
+                    onChange={handleImageChange} 
+                  />
+                  <label htmlFor="image-upload" className="flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-colors cursor-pointer">
+                    <ImageIcon size={20} />
+                    <span className="text-sm font-bold">Clinical Image</span>
+                  </label>
+                  <button className="flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-colors">
+                    <Activity size={20} />
+                    <span className="text-sm font-bold">Case Study</span>
+                  </button>
+                </div>
+                <Button 
+                  onClick={handlePost}
+                  disabled={isSubmitting || uploading || !postContent.trim()}
+                  className="px-8"
+                >
+                  {isSubmitting ? "Sharing..." : uploading ? "Uploading..." : "Share Case"}
+                </Button>
               </div>
-              <Button style={{ borderRadius: "1rem", padding: "0.75rem 2rem", fontWeight: 800 }}>Share</Button>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Feed Content */}
       <motion.div 
@@ -63,34 +164,29 @@ export default function HomePage() {
         animate={{ opacity: 1 }}
         className="flex-col"
       >
-        <PostCard 
-          author="Dr. James Wilson" 
-          specialty="Cardiologist"
-          content="Just completed a successful TAVR procedure. It's amazing how much minimally invasive techniques have evolved in the last decade. 🫀\n\nModern cardiology is truly at its peak! #Cardiology #Surgery"
-          time="2h ago"
-          likes="1.2k"
-          comments="45"
-          image="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=1000"
-        />
-        
-        <PostCard 
-          author="Dr. Sarah Chen" 
-          specialty="Neurologist"
-          content="New study out on neuroplasticity in stroke recovery. The findings suggest that early intervention (within 24-48 hours) is even more critical than previously thought. 🧠"
-          time="8h ago"
-          likes="2.4k"
-          comments="92"
-        />
-
-        <PostCard 
-          author="Sarah Smith" 
-          specialty="MBBS Student"
-          type="DOUBT"
-          content="Can someone help me differentiate between the various types of cardiomyopathy on an echocardiogram? I'm finding the restrictive type a bit confusing. 📚"
-          time="1d ago"
-          likes="850"
-          comments="128"
-        />
+        {loading ? (
+          <div className="text-center py-10 text-slate-400 font-medium">Loading medical feed...</div>
+        ) : posts.length === 0 ? (
+          <div className="premium-card text-center py-20">
+            <Stethoscope size={48} className="mx-auto mb-4 text-slate-200" />
+            <h3 className="text-xl font-bold text-slate-900 mb-2">The feed is empty</h3>
+            <p className="text-slate-500">Be the first to share a medical case or insight!</p>
+          </div>
+        ) : (
+          posts.map((post) => (
+            <PostCard 
+              key={post.id}
+              author={post.author?.name || "Anonymous Doctor"} 
+              specialty={post.author?.specialty || "Medical Practitioner"}
+              content={post.content}
+              time={new Date(post.createdAt).toLocaleDateString()}
+              likes={post.likes?.length || 0}
+              comments={post._count?.comments || 0}
+              image={post.media}
+              type={post.type}
+            />
+          ))
+        )}
       </motion.div>
     </div>
   );
@@ -144,14 +240,5 @@ function PostCard({ author, specialty, content, time, likes, comments, type, ima
         </div>
       </div>
     </div>
-  );
-}
-
-function PostAction({ Icon, count }: any) {
-  return (
-    <button className="flex items-center gap-2 text-slate-500 hover:text-blue-600 transition-all">
-      <Icon size={20} />
-      {count && <span className="text-xs font-bold">{count}</span>}
-    </button>
   );
 }
