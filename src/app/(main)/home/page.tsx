@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   Image as ImageIcon, 
   HelpCircle, 
@@ -12,7 +12,10 @@ import {
   Bookmark,
   Users,
   Activity,
-  Plus
+  Plus,
+  Trash2,
+  Edit3,
+  X
 } from "lucide-react";
 import { Button } from "@/components/ui";
 import { useSession } from "next-auth/react";
@@ -209,6 +212,7 @@ export default function HomePage() {
               comments={post._count?.comments || 0}
               image={post.media}
               type={post.type}
+              authorId={post.authorId}
             />
           ))
         )}
@@ -217,7 +221,7 @@ export default function HomePage() {
   );
 }
 
-function PostCard({ id, author, specialty, content, time, likes, comments, type, image, role }: any) {
+function PostCard({ id, author, specialty, content, time, likes, comments, type, image, role, authorId }: any) {
   const { data: session } = useSession();
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -228,6 +232,43 @@ function PostCard({ id, author, specialty, content, time, likes, comments, type,
   const [commentsList, setCommentsList] = useState<any[]>([]);
   const [commentInput, setCommentInput] = useState("");
   const [isCommenting, setIsCommenting] = useState(false);
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [editContent, setEditContent] = useState(content);
+  const [showMenu, setShowMenu] = useState(false);
+
+  const handleDeletePost = async () => {
+    if (!confirm("Are you sure you want to delete this case?")) return;
+    try {
+      await axios.delete(`/api/posts/${id}`);
+      toast.success("Case deleted");
+      window.location.reload();
+    } catch (error) {
+      toast.error("Failed to delete case");
+    }
+  };
+
+  const handleEditPost = async () => {
+    try {
+      await axios.patch(`/api/posts/${id}`, { content: editContent });
+      toast.success("Case updated");
+      setIsEditing(false);
+      window.location.reload();
+    } catch (error) {
+      toast.error("Failed to update case");
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      await axios.delete(`/api/comments/${commentId}`);
+      setCommentsList(prev => prev.filter(c => c.id !== commentId));
+      setCommentsCount((prev: number) => prev - 1);
+      toast.success("Insight removed");
+    } catch (error) {
+      toast.error("Failed to remove insight");
+    }
+  };
 
   const handleLike = async () => {
     const previousState = isLiked;
@@ -327,9 +368,46 @@ function PostCard({ id, author, specialty, content, time, likes, comments, type,
             </p>
           </div>
         </div>
-        <button className="text-slate-300 hover:text-slate-900 transition-colors">
-          <MoreHorizontal size={24} />
-        </button>
+        <div className="relative">
+          <button 
+            onClick={() => setShowMenu(!showMenu)}
+            className="text-slate-300 hover:text-slate-900 transition-colors p-2"
+          >
+            <MoreHorizontal size={24} />
+          </button>
+          
+          <AnimatePresence>
+            {showMenu && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="absolute right-0 mt-2 w-48 bg-white border border-slate-100 rounded-2xl shadow-xl z-20 overflow-hidden"
+              >
+                {(session?.user as any)?.id === authorId ? (
+                  <>
+                    <button 
+                      onClick={() => { setIsEditing(true); setShowMenu(false); }}
+                      className="flex items-center gap-3 w-full p-4 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors"
+                    >
+                      <Edit3 size={18} /> Edit Case
+                    </button>
+                    <button 
+                      onClick={handleDeletePost}
+                      className="flex items-center gap-3 w-full p-4 text-sm font-bold text-red-500 hover:bg-red-50 transition-colors"
+                    >
+                      <Trash2 size={18} /> Delete Case
+                    </button>
+                  </>
+                ) : (
+                  <button className="flex items-center gap-3 w-full p-4 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors">
+                    Report Content
+                  </button>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* Content */}
@@ -339,9 +417,23 @@ function PostCard({ id, author, specialty, content, time, likes, comments, type,
             Medical Doubt
           </div>
         )}
-        <p className="text-slate-700 leading-relaxed text-lg font-medium whitespace-pre-wrap">
-          {content}
-        </p>
+        {isEditing ? (
+          <div className="flex flex-col gap-3">
+            <textarea 
+              className="input-minimal min-h-[100px]"
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+            />
+            <div className="flex gap-2">
+              <Button onClick={handleEditPost} className="px-6">Save</Button>
+              <Button onClick={() => setIsEditing(false)} variant="outline" className="px-6">Cancel</Button>
+            </div>
+          </div>
+        ) : (
+          <p className="text-slate-700 leading-relaxed text-lg font-medium whitespace-pre-wrap">
+            {content}
+          </p>
+        )}
       </div>
 
       {/* Media */}
@@ -448,6 +540,14 @@ function PostCard({ id, author, specialty, content, time, likes, comments, type,
                       {c.content}
                     </p>
                   </div>
+                  {(session?.user as any)?.id === c.userId && (
+                    <button 
+                      onClick={() => handleDeleteComment(c.id)}
+                      className="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 transition-all p-2"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
