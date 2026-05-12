@@ -1,75 +1,119 @@
-"use client";
-
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useSession } from "next-auth/react";
 import { 
   Calendar, 
   MapPin, 
-  Link as LinkIcon, 
   BadgeCheck, 
   MoreHorizontal,
   Mail,
-  Stethoscope
+  Stethoscope,
+  Settings
 } from "lucide-react";
 import { Button } from "@/components/ui";
+import Link from "next/link";
 
 export default function ProfilePage({ params }: { params: { username: string } }) {
+  const { data: session } = useSession();
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const isOwnProfile = session?.user?.name?.toLowerCase().replace(/\s+/g, '') === params.username.toLowerCase();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(`/api/user/${params.username}`);
+        setUser(response.data);
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUser();
+  }, [params.username]);
+
+  if (loading) return <div className="text-center py-20 font-bold text-slate-400">Loading profile...</div>;
+  if (!user) return <div className="text-center py-20 font-bold text-slate-400">Doctor not found</div>;
+
   return (
     <div style={{ paddingBottom: "5rem" }}>
       {/* Cover Image */}
-      <div style={{ height: "14rem", background: "var(--medical-gradient)", position: "relative" }}>
+      <div style={{ height: "16rem", background: "var(--medical-gradient)", position: "relative" }}>
         <div style={{ position: "absolute", bottom: "-5rem", left: "2rem" }}>
-          <div className="avatar-soft shadow-2xl" style={{ width: "10rem", height: "10rem", border: "6px solid white", fontSize: "2.5rem", borderRadius: "2rem" }}>
-            {params.username?.[0]?.toUpperCase() || "U"}
+          <div className="avatar-soft shadow-2xl" style={{ width: "10rem", height: "10rem", border: "8px solid white", fontSize: "2.5rem", borderRadius: "2.5rem" }}>
+            {user.name?.[0] || "U"}
           </div>
         </div>
       </div>
 
       {/* Profile Actions */}
-      <div className="flex" style={{ justifyContent: "flex-end", padding: "1.5rem", gap: "1rem", marginTop: "1rem" }}>
-        <Button variant="outline" style={{ borderRadius: "1.25rem", width: "3rem", height: "3rem", padding: 0 }}>
-          <MoreHorizontal size={22} />
-        </Button>
-        <Button variant="outline" style={{ borderRadius: "1.25rem", width: "3rem", height: "3rem", padding: 0 }}>
-          <Mail size={22} />
-        </Button>
-        <Button className="px-8 py-4" style={{ borderRadius: "1.5rem", fontWeight: 900 }}>Follow Professional</Button>
+      <div className="flex" style={{ justifyContent: "flex-end", padding: "1.5rem", gap: "1rem", marginTop: "1.5rem" }}>
+        {isOwnProfile ? (
+          <Link href="/settings">
+            <Button variant="outline" className="px-8" style={{ borderRadius: "1.5rem", fontWeight: 900 }}>
+              <Settings size={20} className="mr-2" /> Edit Profile
+            </Button>
+          </Link>
+        ) : (
+          <>
+            <Button variant="outline" style={{ borderRadius: "1.25rem", width: "3.5rem", height: "3.5rem", padding: 0 }}>
+              <Mail size={22} />
+            </Button>
+            <Button className="px-8 py-4" style={{ borderRadius: "1.5rem", fontWeight: 900 }}>Follow Doctor</Button>
+          </>
+        )}
       </div>
 
       {/* Profile Info */}
       <div style={{ padding: "0 2rem", marginTop: "1rem" }}>
-        <div className="flex items-center gap-2">
-          <h1 className="text-4xl font-black text-slate-900">@{params.username}</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-4xl font-black text-slate-900 tracking-tight">{user.name}</h1>
           <BadgeCheck size={28} className="text-blue-600" />
         </div>
-        <p className="text-lg text-slate-500 font-medium">Medical Professional</p>
+        <div className="flex items-center gap-2 mt-1">
+          <p className="text-lg text-blue-600 font-black uppercase tracking-widest" style={{ fontSize: '0.8rem' }}>
+            {user.role || 'DOCTOR'}
+          </p>
+          <span className="text-slate-300">•</span>
+          <p className="text-lg text-slate-500 font-bold" style={{ fontSize: '0.9rem' }}>
+            @{user.username || params.username}
+          </p>
+        </div>
         
-        <p className="text-slate-600 leading-relaxed mt-6 text-lg max-w-2xl">
-          This professional profile has not yet been fully populated. Follow to stay updated with clinical insights and medical cases shared by this user.
+        <p className="text-slate-700 leading-relaxed mt-6 text-lg max-w-2xl font-medium">
+          {user.bio || "This medical professional has not added a bio yet."}
         </p>
 
-        <div className="flex" style={{ flexWrap: "wrap", gap: "2rem", marginTop: "2rem", color: "var(--text-muted)", fontSize: "0.9rem" }}>
-          <div className="flex items-center gap-2">
-            <Stethoscope size={18} />
-            <span className="font-bold">Medical Specialty</span>
+        <div className="flex" style={{ flexWrap: "wrap", gap: "2rem", marginTop: "2rem", color: "var(--text-muted)", fontSize: "0.95rem" }}>
+          <div className="flex items-center gap-2 text-slate-600 font-bold">
+            <Stethoscope size={20} className="text-blue-600" />
+            <span>{user.department || user.specialty || "General Medicine"}</span>
           </div>
-          <div className="flex items-center gap-2">
-            <MapPin size={18} />
-            <span className="font-bold">Location</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Calendar size={18} />
-            <span>Joined DoctorNet recently</span>
+          {user.hospital && (
+            <div className="flex items-center gap-2 text-slate-600 font-bold">
+              <MapPin size={20} className="text-blue-600" />
+              <span>{user.hospital}</span>
+            </div>
+          )}
+          <div className="flex items-center gap-2 text-slate-400">
+            <Calendar size={20} />
+            <span>Joined {new Date(user.createdAt).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</span>
           </div>
         </div>
 
-        <div className="flex gap-8 mt-8">
-          <div className="flex items-center gap-2">
+        <div className="flex gap-10 mt-8 border-t border-slate-100 pt-8">
+          <div className="flex flex-col">
             <span className="font-black text-2xl text-slate-900">0</span>
-            <span className="text-slate-500 font-bold">Followers</span>
+            <span className="text-slate-400 font-bold text-sm uppercase tracking-wider">Followers</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col">
             <span className="font-black text-2xl text-slate-900">0</span>
-            <span className="text-slate-500 font-bold">Following</span>
+            <span className="text-slate-400 font-bold text-sm uppercase tracking-wider">Following</span>
+          </div>
+          <div className="flex flex-col">
+            <span className="font-black text-2xl text-slate-900">{user._count?.posts || 0}</span>
+            <span className="text-slate-400 font-bold text-sm uppercase tracking-wider">Cases</span>
           </div>
         </div>
       </div>

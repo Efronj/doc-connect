@@ -25,6 +25,7 @@ export default function HomePage() {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [postContent, setPostContent] = useState("");
+  const [postType, setPostType] = useState("POST");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -71,8 +72,9 @@ export default function HomePage() {
       await axios.post("/api/posts", {
         content: postContent,
         // @ts-ignore
-        authorId: session.user.id || session.user.uid,
-        media: imageUrl
+        authorId: session.user.id,
+        media: imageUrl,
+        type: postType
       });
       
       setPostContent("");
@@ -114,6 +116,24 @@ export default function HomePage() {
                 onChange={(e) => setPostContent(e.target.value)}
                 style={{ fontSize: "1.25rem", fontWeight: 500 }}
               />
+
+              <div className="flex gap-2 mb-4">
+                <PostTypeBtn 
+                  label="Post" 
+                  active={postType === "POST"} 
+                  onClick={() => setPostType("POST")} 
+                />
+                <PostTypeBtn 
+                  label="Medical Doubt" 
+                  active={postType === "DOUBT"} 
+                  onClick={() => setPostType("DOUBT")} 
+                />
+                <PostTypeBtn 
+                  label="Case Study" 
+                  active={postType === "CASE"} 
+                  onClick={() => setPostType("CASE")} 
+                />
+              </div>
               
               {selectedImage && (
                 <div className="relative mt-4 rounded-2xl overflow-hidden group h-64 shadow-lg border border-slate-100">
@@ -176,8 +196,10 @@ export default function HomePage() {
           posts.map((post) => (
             <PostCard 
               key={post.id}
+              id={post.id}
               author={post.author?.name || "Anonymous Doctor"} 
-              specialty={post.author?.specialty || "Medical Practitioner"}
+              specialty={post.author?.department || post.author?.specialty || "Medical Practitioner"}
+              role={post.author?.role}
               content={post.content}
               time={new Date(post.createdAt).toLocaleDateString()}
               likes={post.likes?.length || 0}
@@ -192,53 +214,136 @@ export default function HomePage() {
   );
 }
 
-function PostCard({ author, specialty, content, time, likes, comments, type, image }: any) {
+function PostCard({ id, author, specialty, content, time, likes, comments, type, image, role }: any) {
+  const [isLiked, setIsLiked] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [currentLikes, setCurrentLikes] = useState(likes);
+
+  const handleLike = async () => {
+    const previousState = isLiked;
+    setIsLiked(!isLiked);
+    setCurrentLikes(prev => previousState ? prev - 1 : prev + 1);
+    
+    try {
+      await axios.post(`/api/posts/${id}/like`);
+    } catch (error) {
+      setIsLiked(previousState);
+      setCurrentLikes(prev => previousState ? prev + 1 : prev - 1);
+      toast.error("Failed to update like");
+    }
+  };
+
+  const handleSave = async () => {
+    const previousState = isSaved;
+    setIsSaved(!isSaved);
+    
+    try {
+      await axios.post(`/api/posts/${id}/save`);
+      toast.success(isSaved ? "Case removed from saved" : "Case saved to library");
+    } catch (error) {
+      setIsSaved(previousState);
+      toast.error("Failed to save case");
+    }
+  };
+
   return (
-    <div className="premium-card">
-      <div className="flex gap-5">
-        <div className="avatar-soft">
-          {author.split(" ").map((n: string) => n[0]).join("")}
+    <div className="premium-card overflow-hidden" style={{ padding: 0 }}>
+      {/* Header */}
+      <div className="flex items-center justify-between p-6">
+        <div className="flex items-center gap-4">
+          <div className="avatar-soft" style={{ width: "3.5rem", height: "3.5rem" }}>
+            {author.split(" ").map((n: string) => n[0]).join("")}
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h4 className="font-black text-slate-900 tracking-tight">{author}</h4>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${role === 'STUDENT' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>
+                {role || 'DOCTOR'}
+              </span>
+            </div>
+            <p className="text-slate-400 font-bold" style={{ fontSize: "0.75rem" }}>
+              {specialty} · {time}
+            </p>
+          </div>
+        </div>
+        <button className="text-slate-300 hover:text-slate-900 transition-colors">
+          <MoreHorizontal size={24} />
+        </button>
+      </div>
+
+      {/* Content */}
+      <div className="px-6 pb-4">
+        {type === "DOUBT" && (
+          <div className="mb-4 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-xs font-black uppercase tracking-widest w-fit border border-emerald-100">
+            Medical Doubt
+          </div>
+        )}
+        <p className="text-slate-700 leading-relaxed text-lg font-medium whitespace-pre-wrap">
+          {content}
+        </p>
+      </div>
+
+      {/* Media */}
+      {image && (
+        <div className="relative aspect-square w-full bg-slate-100 group">
+          <img 
+            src={image} 
+            alt="Clinical visual" 
+            className="w-full h-full object-cover" 
+          />
+          <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+        </div>
+      )}
+
+      {/* Social Actions */}
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-6">
+            <button 
+              onClick={handleLike}
+              className={`flex items-center gap-2 transition-all active:scale-125 ${isLiked ? 'text-red-500' : 'text-slate-400 hover:text-red-500'}`}
+            >
+              <Heart size={28} fill={isLiked ? "currentColor" : "none"} strokeWidth={2.5} />
+            </button>
+            <button className="flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-all">
+              <MessageCircle size={28} strokeWidth={2.5} />
+            </button>
+            <button className="flex items-center gap-2 text-slate-400 hover:text-emerald-500 transition-all">
+              <Share size={28} strokeWidth={2.5} />
+            </button>
+          </div>
+          <button 
+            onClick={handleSave}
+            className={`transition-all active:scale-125 ${isSaved ? 'text-blue-600' : 'text-slate-400 hover:text-blue-600'}`}
+          >
+            <Bookmark size={28} fill={isSaved ? "currentColor" : "none"} strokeWidth={2.5} />
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <p className="text-sm font-black text-slate-900">
+            {currentLikes} doctors <span className="text-slate-400 font-bold">liked this</span>
+          </p>
         </div>
         
-        <div style={{ flex: 1 }}>
-          <div className="flex justify-between items-start">
-            <div>
-              <h4 className="font-bold text-lg text-slate-900">{author}</h4>
-              <p className="text-blue-600 font-bold" style={{ fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>{specialty} · {time}</p>
-            </div>
-            <button className="text-slate-300 hover:text-slate-500 transition-colors"><MoreHorizontal size={22} /></button>
-          </div>
-
-          {type === "DOUBT" && (
-            <div className="mt-3 px-4 py-1 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold w-fit border border-emerald-100">
-              Medical Doubt
-            </div>
-          )}
-
-          <p className="text-slate-700 leading-relaxed my-5" style={{ fontSize: "1.1rem", whiteSpace: "pre-wrap", fontWeight: 400 }}>
-            {content}
-          </p>
-
-          {image && (
-            <div style={{ borderRadius: "1.5rem", overflow: "hidden", marginBottom: "1.5rem", height: "20rem", boxShadow: "0 10px 30px rgba(0,0,0,0.1)" }}>
-              <img src={image} alt="Medical visual" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            </div>
-          )}
-
-          <div className="flex gap-10 pt-4" style={{ borderTop: "1px solid var(--border)" }}>
-            <button className="flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-all">
-              <MessageCircle size={22} />
-              <span className="text-sm font-bold">{comments}</span>
-            </button>
-            <button className="flex items-center gap-2 text-slate-400 hover:text-red-500 transition-all">
-              <Heart size={22} />
-              <span className="text-sm font-bold">{likes}</span>
-            </button>
-            <button className="text-slate-400 hover:text-blue-600 transition-all ml-auto"><Bookmark size={22} /></button>
-            <button className="text-slate-400 hover:text-blue-600 transition-all"><Share size={22} /></button>
-          </div>
-        </div>
+        {comments > 0 && (
+          <button className="mt-3 text-slate-400 text-sm font-bold hover:text-blue-600">
+            View all {comments} medical insights
+          </button>
+        )}
       </div>
     </div>
   );
 }
+
+ f u n c t i o n   P o s t T y p e B t n ( {   l a b e l ,   a c t i v e ,   o n C l i c k   } :   a n y )   { 
+     r e t u r n   ( 
+         < b u t t o n   
+             o n C l i c k = { o n C l i c k } 
+             c l a s s N a m e = { \ p x - 4   p y - 2   r o u n d e d - x l   t e x t - x s   f o n t - b l a c k   u p p e r c a s e   t r a c k i n g - w i d e s t   t r a n s i t i o n - a l l   \ \ } 
+         > 
+             { l a b e l } 
+         < / b u t t o n > 
+     ) ; 
+ }  
+ 

@@ -15,13 +15,12 @@ model User {
   username      String?   @unique
   password      String?
   image         String?
-  specialty     String?
-  hospital      String?
+  role          String?   @default("DOCTOR") // DOCTOR, STUDENT, SPECIALIST
+  department    String?   // Cardiology, Surgery, etc.
   bio           String?
-  location      String?
-  role          String?   @default("DOCTOR")
-  category      String?
-  isVerified    Boolean   @default(false)
+  hospital      String?
+  isPrivate     Boolean   @default(false)
+  savedPostIds  String[]  @db.ObjectId
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

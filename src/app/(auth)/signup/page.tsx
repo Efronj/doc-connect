@@ -31,13 +31,18 @@ export default function SignupPage() {
       const user = result.user;
 
       // Sync with local session
-      await signIn("credentials", {
+      const syncResult = await signIn("credentials", {
         email: user.email,
         password: "google-auth-bypass-key",
-        callbackUrl: "/home"
+        redirect: false
       });
       
-      toast.success("Welcome, Doctor!");
+      if (syncResult?.ok) {
+        toast.success("Welcome, Doctor!");
+        router.push("/home");
+      } else {
+        toast.error(syncResult?.error || "Session sync failed");
+      }
     } catch (error: any) {
       toast.error(error.message || "Google sign-up failed");
     } finally {

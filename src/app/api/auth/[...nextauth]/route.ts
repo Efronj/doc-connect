@@ -51,14 +51,18 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           email: user.email,
           name: user.name,
-          image: user.image
+          image: user.image,
+          role: user.role,
+          department: user.department,
+          bio: user.bio,
+          hospital: user.hospital
         };
       }
     })
   ],
   pages: {
     signIn: '/login',
-    error: '/login', // Redirect errors back to login with a message
+    error: '/login',
   },
   session: {
     strategy: "jwt",
@@ -67,12 +71,20 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }: any) {
       if (user) {
         token.id = user.id;
+        token.role = user.role;
+        token.department = user.department;
+        token.bio = user.bio;
+        token.hospital = user.hospital;
       }
       return token;
     },
     async session({ session, token }: any) {
       if (session?.user) {
         session.user.id = token.id;
+        session.user.role = token.role;
+        session.user.department = token.department;
+        session.user.bio = token.bio;
+        session.user.hospital = token.hospital;
       }
       return session;
     },

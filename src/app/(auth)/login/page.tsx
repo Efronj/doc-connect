@@ -25,13 +25,18 @@ export default function LoginPage() {
       const user = result.user;
 
       // Sync with NextAuth
-      await signIn("credentials", {
+      const syncResult = await signIn("credentials", {
         email: user.email,
-        password: "google-auth-bypass-key", // This will trigger the self-healing logic in [...nextauth]
-        callbackUrl: "/home"
+        password: "google-auth-bypass-key",
+        redirect: false
       });
       
-      toast.success("Welcome, Doctor!");
+      if (syncResult?.ok) {
+        toast.success("Welcome, Doctor!");
+        router.push("/home");
+      } else {
+        toast.error(syncResult?.error || "Session sync failed");
+      }
     } catch (error: any) {
       toast.error(error.message || "Google sign-in failed");
     } finally {

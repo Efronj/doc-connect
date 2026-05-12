@@ -12,7 +12,8 @@ import {
   Stethoscope,
   Bookmark,
   Users,
-  Activity
+  Activity,
+  Shield
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -29,7 +30,9 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     { icon: Search, label: "Explore", href: "/search" },
     { icon: Bell, label: "Notifications", href: "/notifications" },
     { icon: MessageSquare, label: "Messages", href: "/messages" },
+    { icon: Bookmark, label: "Saved", href: "/settings?tab=saved" },
     { icon: User, label: "Profile", href: session?.user?.name ? `/profile/${session.user.name.toLowerCase().replace(/\s+/g, '')}` : "/profile" },
+    { icon: Shield, label: "Settings", href: "/settings" },
   ];
 
   return (
