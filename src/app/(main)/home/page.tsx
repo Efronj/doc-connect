@@ -198,7 +198,7 @@ export default function HomePage() {
               key={post.id}
               id={post.id}
               author={post.author?.name || "Anonymous Doctor"} 
-              specialty={post.author?.department || post.author?.specialty || "Medical Practitioner"}
+              specialty={post.author?.department || "Medical Practitioner"}
               role={post.author?.role}
               content={post.content}
               time={new Date(post.createdAt).toLocaleDateString()}

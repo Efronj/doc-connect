@@ -88,7 +88,7 @@ export default function ProfilePage({ params }: { params: { username: string } }
         <div className="flex" style={{ flexWrap: "wrap", gap: "2rem", marginTop: "2rem", color: "var(--text-muted)", fontSize: "0.95rem" }}>
           <div className="flex items-center gap-2 text-slate-600 font-bold">
             <Stethoscope size={20} className="text-blue-600" />
-            <span>{user.department || user.specialty || "General Medicine"}</span>
+            <span>{user.department || "General Medicine"}</span>
           </div>
           {user.hospital && (
             <div className="flex items-center gap-2 text-slate-600 font-bold">
