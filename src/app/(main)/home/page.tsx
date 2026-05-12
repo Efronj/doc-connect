@@ -228,7 +228,7 @@ function PostCard({ id, author, specialty, content, time, likes, comments, type,
       await axios.post(`/api/posts/${id}/like`);
     } catch (error) {
       setIsLiked(previousState);
-      setCurrentLikes(prev => previousState ? prev + 1 : prev - 1);
+      setCurrentLikes((prev: number) => previousState ? prev + 1 : prev - 1);
       toast.error("Failed to update like");
     }
   };
