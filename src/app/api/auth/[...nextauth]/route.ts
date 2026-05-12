@@ -19,11 +19,24 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Invalid credentials');
         }
 
-        const user = await prisma.user.findUnique({
+        let user = await prisma.user.findUnique({
           where: {
             email: credentials.email
           }
         });
+
+        // SELF-HEALING: If user exists in Firebase but not in MongoDB, create them now
+        if (!user) {
+          const hashedPassword = await bcrypt.hash(credentials.password, 12);
+          user = await prisma.user.create({
+            data: {
+              email: credentials.email,
+              name: credentials.email.split('@')[0], // Default name
+              username: credentials.email.split('@')[0] + Math.floor(Math.random() * 1000),
+              password: hashedPassword,
+            }
+          });
+        }
 
         if (!user || !user?.password) {
           throw new Error('Invalid credentials');
