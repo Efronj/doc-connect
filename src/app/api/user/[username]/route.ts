@@ -3,15 +3,16 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   req: Request,
-  { params }: { params: { username: string } }
+  { params }: { params: Promise<{ username: string }> }
 ) {
   try {
+    const { username } = await params;
     // Find user by username (ignoring case and whitespace)
     const user = await prisma.user.findFirst({
       where: {
         OR: [
-          { username: params.username },
-          { name: { contains: params.username, mode: 'insensitive' } }
+          { username },
+          { name: { contains: username, mode: 'insensitive' } }
         ]
       },
       include: {

@@ -222,7 +222,7 @@ function PostCard({ id, author, specialty, content, time, likes, comments, type,
   const handleLike = async () => {
     const previousState = isLiked;
     setIsLiked(!isLiked);
-    setCurrentLikes(prev => previousState ? prev - 1 : prev + 1);
+    setCurrentLikes((prev: number) => previousState ? prev - 1 : prev + 1);
     
     try {
       await axios.post(`/api/posts/${id}/like`);

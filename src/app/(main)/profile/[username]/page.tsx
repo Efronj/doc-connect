@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
@@ -11,9 +13,10 @@ import {
   Settings
 } from "lucide-react";
 import { Button } from "@/components/ui";
-import Link from "next/link";
+import { use } from "react";
 
-export default function ProfilePage({ params }: { params: { username: string } }) {
+export default function ProfilePage({ params: paramsPromise }: { params: Promise<{ username: string }> }) {
+  const params = use(paramsPromise);
   const { data: session } = useSession();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
