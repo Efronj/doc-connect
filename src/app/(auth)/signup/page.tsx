@@ -9,7 +9,8 @@ import { useRouter } from "next/navigation";
 
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { signIn } from "next-auth/react";
+import { auth } from "@/lib/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 export default function SignupPage() {
   const [loading, setLoading] = useState(false);
@@ -32,20 +33,34 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      await axios.post("/api/register", formData);
+      // 1. Sign up with Firebase
+      const userCredential = await createUserWithEmailAndPassword(
+        auth, 
+        formData.email, 
+        formData.password
+      );
+
+      // 2. Save user data to our MongoDB database (silent)
+      try {
+        await axios.post("/api/register", {
+          ...formData,
+          firebaseUid: userCredential.user.uid
+        });
+      } catch (dbError) {
+        console.warn("Database sync failed, but account created in Firebase", dbError);
+      }
+
       toast.success("Account created successfully!");
       
-      const callback = await signIn("credentials", {
+      // 3. Sign in to the local session
+      await signIn("credentials", {
         email: formData.email,
         password: formData.password,
-        redirect: false
+        callbackUrl: "/home"
       });
 
-      if (callback?.ok) {
-        router.push("/onboarding");
-      }
     } catch (error: any) {
-      toast.error(error.response?.data || "Something went wrong");
+      toast.error(error.message || "Failed to create account");
     } finally {
       setLoading(false);
     }

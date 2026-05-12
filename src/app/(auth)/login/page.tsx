@@ -7,8 +7,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { signIn } from "next-auth/react";
-import { toast } from "react-hot-toast";
+import { auth } from "@/lib/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
@@ -21,6 +21,10 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+      // 1. Sign in with Firebase
+      await signInWithEmailAndPassword(auth, email, password);
+
+      // 2. Sync with local session
       const callback = await signIn("credentials", {
         email,
         password,
@@ -35,8 +39,8 @@ export default function LoginPage() {
       if (callback?.error) {
         toast.error(callback.error);
       }
-    } catch (error) {
-      toast.error("Something went wrong");
+    } catch (error: any) {
+      toast.error(error.message || "Authentication failed");
     } finally {
       setLoading(false);
     }
