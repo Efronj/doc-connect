@@ -11,33 +11,35 @@ export async function POST(
     const { postId } = await params;
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.id) {
+    if (!session || !(session.user as any)?.id) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
+    const userId = (session.user as any).id;
+
     const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
+      where: { id: userId },
       select: { savedPostIds: true }
     });
 
-    const isSaved = user?.savedPostIds.includes(params.postId);
+    const isSaved = user?.savedPostIds.includes(postId);
 
     if (isSaved) {
       await prisma.user.update({
-        where: { id: session.user.id },
+        where: { id: userId },
         data: {
           savedPostIds: {
-            set: user?.savedPostIds.filter(id => id !== params.postId)
+            set: user?.savedPostIds.filter(id => id !== postId)
           }
         }
       });
       return NextResponse.json({ saved: false });
     } else {
       await prisma.user.update({
-        where: { id: session.user.id },
+        where: { id: userId },
         data: {
           savedPostIds: {
-            push: params.postId
+            push: postId
           }
         }
       });

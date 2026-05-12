@@ -20,6 +20,11 @@ export default function LoginPage() {
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
+    if (!auth) {
+      toast.error("Auth service unavailable");
+      setLoading(false);
+      return;
+    }
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
@@ -47,6 +52,12 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    if (!auth) {
+      toast.error("Auth service unavailable");
+      setLoading(false);
+      return;
+    }
 
     try {
       // 1. Sign in with Firebase

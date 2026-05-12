@@ -215,9 +215,16 @@ export default function HomePage() {
 }
 
 function PostCard({ id, author, specialty, content, time, likes, comments, type, image, role }: any) {
+  const { data: session } = useSession();
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [currentLikes, setCurrentLikes] = useState(likes);
+
+  const [showComments, setShowComments] = useState(false);
+  const [commentsCount, setCommentsCount] = useState(comments);
+  const [commentsList, setCommentsList] = useState<any[]>([]);
+  const [commentInput, setCommentInput] = useState("");
+  const [isCommenting, setIsCommenting] = useState(false);
 
   const handleLike = async () => {
     const previousState = isLiked;
@@ -245,6 +252,57 @@ function PostCard({ id, author, specialty, content, time, likes, comments, type,
       toast.error("Failed to save case");
     }
   };
+
+  const handleShare = () => {
+    const url = `${window.location.origin}/post/${id}`;
+    navigator.clipboard.writeText(url);
+    toast.success("Clinical case link copied!");
+  };
+
+  const fetchComments = async () => {
+    try {
+      const res = await axios.get(`/api/posts/${id}/comments`);
+      setCommentsList(res.data);
+    } catch (error) {
+      console.error("Failed to fetch comments");
+    }
+  };
+
+  const handleAddComment = async () => {
+    if (!commentInput.trim()) return;
+    setIsCommenting(true);
+    
+    // Optimistic update
+    const newComment = {
+      id: Date.now().toString(),
+      content: commentInput,
+      createdAt: new Date().toISOString(),
+      user: {
+        name: "You",
+        role: "DOCTOR"
+      }
+    };
+    setCommentsList([newComment, ...commentsList]);
+    setCommentsCount((prev: number) => prev + 1);
+    const text = commentInput;
+    setCommentInput("");
+
+    try {
+      const res = await axios.post(`/api/posts/${id}/comments`, { content: text });
+      // Replace optimistic comment with real one
+      setCommentsList((prev: any[]) => [res.data, ...prev.filter(c => c.id !== newComment.id)]);
+    } catch (error) {
+      setCommentsList((prev: any[]) => prev.filter(c => c.id !== newComment.id));
+      setCommentsCount((prev: number) => prev - 1);
+      toast.error("Failed to post comment");
+    } finally {
+      setIsCommenting(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showComments) fetchComments();
+  }, [showComments]);
 
   return (
     <div className="premium-card overflow-hidden" style={{ padding: 0 }}>
@@ -305,10 +363,16 @@ function PostCard({ id, author, specialty, content, time, likes, comments, type,
             >
               <Heart size={28} fill={isLiked ? "currentColor" : "none"} strokeWidth={2.5} />
             </button>
-            <button className="flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-all">
+            <button 
+              onClick={() => setShowComments(!showComments)}
+              className="flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-all"
+            >
               <MessageCircle size={28} strokeWidth={2.5} />
             </button>
-            <button className="flex items-center gap-2 text-slate-400 hover:text-emerald-500 transition-all">
+            <button 
+              onClick={handleShare}
+              className="flex items-center gap-2 text-slate-400 hover:text-emerald-500 transition-all"
+            >
               <Share size={28} strokeWidth={2.5} />
             </button>
           </div>
@@ -326,12 +390,68 @@ function PostCard({ id, author, specialty, content, time, likes, comments, type,
           </p>
         </div>
         
-        {comments > 0 && (
-          <button className="mt-3 text-slate-400 text-sm font-bold hover:text-blue-600">
-            View all {comments} medical insights
+        {commentsCount > 0 && (
+          <button 
+            onClick={() => setShowComments(!showComments)}
+            className="mt-3 text-slate-400 text-sm font-bold hover:text-blue-600"
+          >
+            {showComments ? "Hide medical insights" : `View all ${commentsCount} medical insights`}
           </button>
         )}
+
+        {/* Comment Section */}
+        {showComments && (
+          <div className="mt-6 pt-6 border-t border-slate-50 flex flex-col gap-5">
+            <div className="flex gap-3">
+              <div className="avatar-soft" style={{ width: "2.5rem", height: "2.5rem", flexShrink: 0 }}>
+                {session?.user?.name?.[0] || "U"}
+              </div>
+              <div className="flex-1 flex gap-2">
+                <input 
+                  type="text" 
+                  placeholder="Share a clinical insight..." 
+                  className="input-minimal"
+                  value={commentInput}
+                  onChange={(e) => setCommentInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleAddComment()}
+                />
+                <Button 
+                  onClick={handleAddComment} 
+                  disabled={isCommenting || !commentInput.trim()}
+                  className="px-4"
+                >
+                  Post
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-6">
+              {commentsList.map((c) => (
+                <div key={c.id} className="flex gap-3 group">
+                  <div className="avatar-soft" style={{ width: "2.5rem", height: "2.5rem", flexShrink: 0 }}>
+                    {c.user?.name?.[0] || "U"}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-black text-sm text-slate-900">{c.user?.name}</span>
+                      <span className="px-1.5 py-0.5 rounded-md bg-slate-100 text-[9px] font-black uppercase text-slate-500">
+                        {c.user?.role || "DOCTOR"}
+                      </span>
+                      <span className="text-[10px] text-slate-300 font-bold">
+                        {new Date(c.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-700 leading-relaxed font-medium">
+                      {c.content}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
+
     </div>
   );
 }

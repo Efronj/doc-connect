@@ -17,6 +17,11 @@ export default function ForgotPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    if (!auth) {
+      toast.error("Auth service unavailable");
+      setLoading(false);
+      return;
+    }
     try {
       await sendPasswordResetEmail(auth, email);
       setSent(true);

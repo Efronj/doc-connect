@@ -10,7 +10,8 @@ import {
   MoreHorizontal,
   Mail,
   Stethoscope,
-  Settings
+  Settings,
+  Heart
 } from "lucide-react";
 import { Button } from "@/components/ui";
 import Link from "next/link";
@@ -21,6 +22,8 @@ export default function ProfilePage({ params: paramsPromise }: { params: Promise
   const { data: session } = useSession();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [userPosts, setUserPosts] = useState<any[]>([]);
+  const [postsLoading, setPostsLoading] = useState(true);
   const isOwnProfile = session?.user?.name?.toLowerCase().replace(/\s+/g, '') === params.username.toLowerCase();
 
   useEffect(() => {
@@ -34,7 +37,20 @@ export default function ProfilePage({ params: paramsPromise }: { params: Promise
         setLoading(false);
       }
     };
+
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get(`/api/user/${params.username}/posts`);
+        setUserPosts(response.data);
+      } catch (error) {
+        console.error("Failed to fetch posts:", error);
+      } finally {
+        setPostsLoading(false);
+      }
+    };
+
     fetchUser();
+    fetchPosts();
   }, [params.username]);
 
   if (loading) return <div className="text-center py-20 font-bold text-slate-400">Loading profile...</div>;
@@ -124,17 +140,40 @@ export default function ProfilePage({ params: paramsPromise }: { params: Promise
 
       {/* Profile Tabs */}
       <div className="flex" style={{ borderBottom: "1px solid var(--border)", marginTop: "2rem", position: "sticky", top: "4rem", backgroundColor: "rgba(255,255,255,0.8)", backdropFilter: "blur(12px)", zIndex: 10 }}>
-        <TabItem label="Posts" active />
-        <TabItem label="Replies" />
-        <TabItem label="Highlights" />
-        <TabItem label="Media" />
+        <TabItem label="Cases" active />
+        <TabItem label="Insights" />
+        <TabItem label="Library" />
       </div>
 
-      {/* User Posts Placeholder */}
-      <div className="flex-col items-center justify-center" style={{ padding: "5rem", color: "var(--text-muted)", textAlign: "center" }}>
-        <p className="text-lg font-bold">No posts yet</p>
-        <p className="text-sm">Posts from @{params.username} will appear here</p>
-      </div>
+      {/* Grid Content */}
+      {postsLoading ? (
+        <div className="text-center py-20 text-slate-400 font-bold">Loading cases...</div>
+      ) : userPosts.length === 0 ? (
+        <div className="flex-col items-center justify-center" style={{ padding: "5rem", color: "var(--text-muted)", textAlign: "center" }}>
+          <p className="text-lg font-bold">No cases yet</p>
+          <p className="text-sm">Clinical posts from @{params.username} will appear here</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-3 gap-1 px-1 mt-1">
+          {userPosts.map((post) => (
+            <div key={post.id} className="relative aspect-square bg-slate-100 overflow-hidden cursor-pointer group">
+              {post.media ? (
+                <img src={post.media} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center p-4 text-center">
+                  <p className="text-[10px] font-bold text-slate-400 line-clamp-3">{post.content}</p>
+                </div>
+              )}
+              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 text-white">
+                <div className="flex items-center gap-1">
+                  <Heart size={20} fill="white" />
+                  <span className="font-bold">{post.likes?.length || 0}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

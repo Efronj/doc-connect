@@ -26,6 +26,11 @@ export default function SignupPage() {
 
   const handleGoogleSignUp = async () => {
     setLoading(true);
+    if (!auth) {
+      toast.error("Auth service unavailable");
+      setLoading(false);
+      return;
+    }
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
@@ -58,6 +63,12 @@ export default function SignupPage() {
     }
 
     setLoading(true);
+
+    if (!auth) {
+      toast.error("Auth service unavailable");
+      setLoading(false);
+      return;
+    }
 
     try {
       // 1. Sign up with Firebase

@@ -11,14 +11,16 @@ export async function POST(
     const { postId } = await params;
     const session = await getServerSession(authOptions);
 
-    if (!session?.user?.id) {
+    if (!session || !(session.user as any)?.id) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
+    const userId = (session.user as any).id;
+
     const existingLike = await prisma.like.findFirst({
       where: {
-        userId: session.user.id,
-        postId: params.postId
+        userId: userId,
+        postId: postId
       }
     });
 
@@ -32,8 +34,8 @@ export async function POST(
     } else {
       await prisma.like.create({
         data: {
-          userId: session.user.id,
-          postId: params.postId
+          userId: userId,
+          postId: postId
         }
       });
       return NextResponse.json({ liked: true });
