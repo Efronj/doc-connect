@@ -1,12 +1,9 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
 
 export const authOptions: NextAuthOptions = {
-  // @ts-ignore
-  adapter: PrismaAdapter(prisma) as any,
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -31,7 +28,7 @@ export const authOptions: NextAuthOptions = {
           user = await prisma.user.create({
             data: {
               email: credentials.email,
-              name: credentials.email.split('@')[0], // Default name
+              name: credentials.email.split('@')[0],
               username: credentials.email.split('@')[0] + Math.floor(Math.random() * 1000),
               password: hashedPassword,
             }
@@ -51,21 +48,32 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Invalid credentials');
         }
 
-        return user;
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          image: user.image
+        };
       }
     })
   ],
   pages: {
     signIn: '/login',
+    error: '/login', // Redirect errors back to login with a message
   },
-  debug: process.env.NODE_ENV === 'development',
   session: {
     strategy: "jwt",
   },
   callbacks: {
+    async jwt({ token, user }: any) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
     async session({ session, token }: any) {
       if (session?.user) {
-        session.user.id = token.sub;
+        session.user.id = token.id;
       }
       return session;
     },
