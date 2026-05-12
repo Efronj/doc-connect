@@ -7,14 +7,35 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { auth } from "@/lib/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth, googleProvider } from "@/lib/firebase";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      // Sync with NextAuth
+      await signIn("credentials", {
+        email: user.email,
+        password: "google-auth-bypass-key", // This will trigger the self-healing logic in [...nextauth]
+        callbackUrl: "/home"
+      });
+      
+      toast.success("Welcome, Doctor!");
+    } catch (error: any) {
+      toast.error(error.message || "Google sign-in failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -162,7 +183,13 @@ export default function LoginPage() {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <Button variant="outline" className="py-4" style={{ borderRadius: "1.25rem" }}>
+            <Button 
+              variant="outline" 
+              className="py-4" 
+              style={{ borderRadius: "1.25rem" }}
+              onClick={handleGoogleSignIn}
+              disabled={loading}
+            >
               <GoogleIcon size={20} style={{ marginRight: "0.75rem" }} />
               Google
             </Button>

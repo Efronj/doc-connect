@@ -7,10 +7,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import axios from "axios";
-import { toast } from "react-hot-toast";
-import { auth } from "@/lib/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, googleProvider } from "@/lib/firebase";
+import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 
 export default function SignupPage() {
   const [loading, setLoading] = useState(false);
@@ -22,6 +20,27 @@ export default function SignupPage() {
     confirmPassword: ""
   });
   const router = useRouter();
+
+  const handleGoogleSignUp = async () => {
+    setLoading(true);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      // Sync with local session
+      await signIn("credentials", {
+        email: user.email,
+        password: "google-auth-bypass-key",
+        callbackUrl: "/home"
+      });
+      
+      toast.success("Welcome, Doctor!");
+    } catch (error: any) {
+      toast.error(error.message || "Google sign-up failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -192,11 +211,16 @@ export default function SignupPage() {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <Button variant="outline" className="py-4">
+            <Button 
+              variant="outline" 
+              className="py-4"
+              onClick={handleGoogleSignUp}
+              disabled={loading}
+            >
               <GoogleIcon size={20} style={{ marginRight: "0.75rem" }} />
               Google
             </Button>
-            <Button variant="outline" className="py-4">
+            <Button variant="outline" className="py-4" disabled={loading}>
               <LinkedInIcon size={20} style={{ marginRight: "0.75rem" }} />
               LinkedIn
             </Button>
