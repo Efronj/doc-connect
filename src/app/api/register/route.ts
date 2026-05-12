@@ -11,6 +11,20 @@ export async function POST(request: Request) {
       return new NextResponse("Missing information", { status: 400 });
     }
 
+    // Check if user exists
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email },
+          { username }
+        ]
+      }
+    });
+
+    if (existingUser) {
+      return new NextResponse("User already exists with this email or username", { status: 400 });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const user = await prisma.user.create({
@@ -21,13 +35,16 @@ export async function POST(request: Request) {
         password: hashedPassword,
         category,
         specialty,
-        role: "DOCTOR" // Default for now
+        role: "DOCTOR"
       }
     });
 
     return NextResponse.json(user);
   } catch (error: any) {
     console.error("REGISTRATION_ERROR", error);
-    return new NextResponse("Internal Error", { status: 500 });
+    if (error.code === 'P2002') {
+      return new NextResponse("User already exists", { status: 400 });
+    }
+    return new NextResponse(`Database Connection Error: ${error.message || "Internal Error"}`, { status: 500 });
   }
 }
