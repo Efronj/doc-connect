@@ -10,8 +10,8 @@ export async function GET() {
             name: true,
             username: true,
             image: true,
-            specialty: true,
-            isVerified: true,
+            department: true,
+            role: true,
           }
         },
         likes: true,
