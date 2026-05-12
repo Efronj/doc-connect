@@ -110,27 +110,27 @@ export default function SignupPage() {
       {/* Left Side: Attractive Visuals */}
       <div className="auth-sidebar relative">
         <div 
-          className="absolute inset-0 z-0"
-          style={{ 
-            background: "radial-gradient(circle at bottom left, #60a5fa, #2563eb, #1e3a8a)",
-            opacity: 0.9 
-          }}
+          className="absolute inset-0 z-0 bg-gradient-to-br from-blue-700 via-blue-800 to-slate-900"
         />
         
-        {/* Animated Grid */}
+        {/* Subtle Pattern */}
         <div className="absolute inset-0 opacity-10 z-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
 
-        <div className="relative z-10 animate-fade-in">
-          <div className="brand-logo-container mb-10">
-            <UserPlus size={48} color="white" />
-          </div>
+        <div className="relative z-10 animate-fade-in max-w-xl">
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="w-20 h-20 bg-white/10 backdrop-blur-xl rounded-[2rem] flex items-center justify-center mb-10 shadow-2xl border border-white/20"
+          >
+            <UserPlus size={40} color="white" />
+          </motion.div>
           
-          <h1 className="text-6xl font-black mb-6 tracking-tighter">
+          <h1 className="text-6xl font-black mb-8 tracking-tighter leading-tight text-balance">
             Start your <br /> 
-            <span className="text-blue-200">Professional Journey.</span>
+            <span className="text-blue-300">Professional Journey.</span>
           </h1>
           
-          <p className="text-xl text-blue-200 font-medium mb-12">
+          <p className="text-xl text-blue-100/80 font-medium mb-12 leading-relaxed">
             Build your professional presence, collaborate with specialists, and access exclusive medical resources.
           </p>
 
@@ -163,7 +163,7 @@ export default function SignupPage() {
             <p className="text-slate-500 font-medium">Join the world's most trusted medical network</p>
           </div>
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <Input 
               label="Full Name" 
               placeholder="Dr. Sarah Johnson" 
@@ -172,7 +172,7 @@ export default function SignupPage() {
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             />
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input 
                 label="Email Address" 
                 type="email" 
@@ -190,7 +190,7 @@ export default function SignupPage() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input 
                 label="Password" 
                 type="password" 
@@ -209,37 +209,38 @@ export default function SignupPage() {
               />
             </div>
             
-            <div className="py-4">
-              <div className="flex items-start gap-3 p-4 bg-slate-50 border border-border rounded-xl">
-                <input type="checkbox" id="terms" required style={{ marginTop: "0.25rem" }} />
-                <label htmlFor="terms" className="text-sm text-slate-600 font-medium">
-                  I agree to the <span className="text-blue-600 font-bold hover:underline">Terms of Service</span> and <span className="text-blue-600 font-bold hover:underline">Professional Code of Conduct</span>.
+            <div className="py-2">
+              <div className="flex items-start gap-3 p-4 bg-slate-50 border border-slate-100 rounded-2xl">
+                <input type="checkbox" id="terms" required className="mt-1 w-5 h-5 cursor-pointer accent-blue-600 shrink-0" />
+                <label htmlFor="terms" className="text-xs text-slate-500 font-bold leading-relaxed">
+                  I agree to the <span className="text-blue-600 hover:underline cursor-pointer">Terms of Service</span> and <span className="text-blue-600 hover:underline cursor-pointer">Professional Code of Conduct</span>.
                 </label>
               </div>
             </div>
 
-            <Button type="submit" className="w-full py-5 text-xl mt-4">
+            <Button type="submit" className="w-full py-5 text-xl font-black rounded-2xl shadow-lg shadow-blue-100 mt-2">
               {loading ? "Creating Account..." : "Create Account"}
             </Button>
           </form>
 
           <div className="divider-container">
             <div className="divider-line" />
-            <span className="divider-text">Or register with</span>
+            <span className="divider-text bg-white px-4 text-xs font-black text-slate-400 tracking-widest">OR REGISTER WITH</span>
+            <div className="divider-line" />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <Button 
               variant="outline" 
-              className="py-4"
+              className="py-4 rounded-2xl border-slate-200 hover:bg-slate-50"
               onClick={handleGoogleSignUp}
               disabled={loading}
             >
-              <GoogleIcon size={20} style={{ marginRight: "0.75rem" }} />
+              <GoogleIcon size={20} className="mr-3" />
               Google
             </Button>
-            <Button variant="outline" className="py-4" disabled={loading}>
-              <LinkedInIcon size={20} style={{ marginRight: "0.75rem" }} />
+            <Button variant="outline" className="py-4 rounded-2xl border-slate-200 hover:bg-slate-50" disabled={loading}>
+              <LinkedInIcon size={20} className="mr-3" />
               LinkedIn
             </Button>
           </div>

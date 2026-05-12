@@ -86,56 +86,39 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="auth-container" style={{ backgroundColor: "#0f172a" }}>
+    <div className="auth-container">
       
       {/* Left Side: Sophisticated Branding & Visuals */}
       <div className="auth-sidebar relative">
         <div 
-          className="absolute inset-0 z-0"
-          style={{ 
-            background: "linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%)",
-            opacity: 1 
-          }}
+          className="absolute inset-0 z-0 bg-gradient-to-br from-blue-700 via-blue-800 to-slate-900"
         />
         
-        {/* Animated Shapes */}
-        <div 
-          className="absolute" 
-          style={{ 
-            top: "-10rem", 
-            left: "-10rem", 
-            width: "30rem", 
-            height: "30rem", 
-            background: "radial-gradient(circle, rgba(59,130,246,0.2) 0%, transparent 70%)",
-            borderRadius: "50%"
-          }} 
-        />
+        {/* Subtle Pattern */}
+        <div className="absolute inset-0 opacity-10 z-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
 
         {/* Content */}
-        <div className="relative z-10 animate-fade-in" style={{ padding: "2rem" }}>
+        <div className="relative z-10 animate-fade-in max-w-xl">
           <motion.div 
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="brand-logo-container mb-12"
-            style={{ padding: "1.25rem", borderRadius: "2rem", boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }}
+            className="w-20 h-20 bg-white/10 backdrop-blur-xl rounded-[2rem] flex items-center justify-center mb-10 shadow-2xl border border-white/20"
           >
-            <Stethoscope size={56} color="white" strokeWidth={2.5} />
+            <Stethoscope size={40} color="white" strokeWidth={2.5} />
           </motion.div>
           
           <h1 className="text-6xl font-black mb-8 tracking-tighter leading-tight text-balance">
             Elevating <br /> 
-            <span className="text-blue-200">Medical Connectivity.</span>
+            <span className="text-blue-300">Medical Connectivity.</span>
           </h1>
           
-          <p className="text-xl text-blue-100 font-medium mb-12 leading-relaxed opacity-80">
+          <p className="text-xl text-blue-100/80 font-medium mb-12 leading-relaxed">
             A secure, professional environment for verified healthcare practitioners to collaborate and grow.
           </p>
 
           <div className="grid grid-cols-2 gap-10">
             <FeatureItem Icon={ShieldCheck} title="Strict Verification" desc="Doctors only environment" />
             <FeatureItem Icon={Zap} title="Instant Insights" desc="Real-time clinical doubts" />
-            <FeatureItem Icon={Globe} title="Global Network" desc="Connect with specialists" />
-            <FeatureItem Icon={ArrowRight} title="Advanced Tools" desc="AI assisted diagnostics" />
           </div>
         </div>
       </div>
@@ -144,7 +127,7 @@ export default function LoginPage() {
       <div className="auth-form-container">
         
         {/* Mobile Logo */}
-        <div className="lg:hidden mb-8 flex flex-col items-center">
+        <div className="lg:hidden mb-10 flex flex-col items-center">
           <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center text-white mb-4 shadow-lg shadow-blue-200">
             <Stethoscope size={32} />
           </div>
@@ -162,18 +145,17 @@ export default function LoginPage() {
             <p className="text-slate-500 font-medium">Continue your professional journey</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="flex-col gap-2">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
             <Input 
               label="Professional Email" 
               placeholder="name@hospital.com" 
               required 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              style={{ padding: "1.25rem", borderRadius: "1.25rem" }}
             />
             
-            <div className="flex-col mb-6">
-              <div className="flex justify-between px-1 mb-2">
+            <div className="flex flex-col gap-2 mb-2">
+              <div className="flex justify-between px-1">
                 <label className="text-sm font-bold text-slate-700">Password</label>
                 <Link href="/forgot-password" title="Forgot Password" className="text-xs text-blue-600 font-black hover:underline">Reset Password</Link>
               </div>
@@ -183,19 +165,17 @@ export default function LoginPage() {
                 required 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                style={{ padding: "1.25rem", borderRadius: "1.25rem" }}
               />
             </div>
 
-            <div className="flex items-center gap-3 mb-8 ml-1">
-              <input type="checkbox" id="remember" style={{ width: "1.2rem", height: "1.2rem", cursor: "pointer" }} />
+            <div className="flex items-center gap-3 mb-4 ml-1">
+              <input type="checkbox" id="remember" className="w-5 h-5 cursor-pointer accent-blue-600" />
               <label htmlFor="remember" className="text-sm text-slate-600 font-bold select-none cursor-pointer">Keep me logged in</label>
             </div>
             
             <Button 
               type="submit" 
-              className="w-full py-5 text-xl font-black"
-              style={{ borderRadius: "1.5rem", boxShadow: "var(--shadow-premium)" }}
+              className="w-full py-5 text-xl font-black rounded-2xl shadow-lg shadow-blue-100"
               disabled={loading}
             >
               {loading ? "Authenticating..." : "Sign In to DoctorNet"}
@@ -204,22 +184,22 @@ export default function LoginPage() {
 
           <div className="divider-container">
             <div className="divider-line" />
-            <span className="divider-text" style={{ backgroundColor: "white" }}>SECURE ACCESS</span>
+            <span className="divider-text bg-white px-4 text-xs font-black text-slate-400 tracking-widest">OR CONTINUE WITH</span>
+            <div className="divider-line" />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <Button 
               variant="outline" 
-              className="py-4" 
-              style={{ borderRadius: "1.25rem" }}
+              className="py-4 rounded-2xl border-slate-200 hover:bg-slate-50" 
               onClick={handleGoogleSignIn}
               disabled={loading}
             >
-              <GoogleIcon size={20} style={{ marginRight: "0.75rem" }} />
+              <GoogleIcon size={20} className="mr-3" />
               Google
             </Button>
-            <Button variant="outline" className="py-4" style={{ borderRadius: "1.25rem" }}>
-              <AppleIcon size={20} style={{ marginRight: "0.75rem" }} />
+            <Button variant="outline" className="py-4 rounded-2xl border-slate-200 hover:bg-slate-50">
+              <AppleIcon size={20} className="mr-3" />
               Apple
             </Button>
           </div>
