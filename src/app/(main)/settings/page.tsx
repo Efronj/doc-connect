@@ -12,11 +12,13 @@ import {
   ChevronRight,
   Camera,
   Check,
-  Activity
+  Activity,
+  LogOut
 } from "lucide-react";
 import { Button, Input } from "@/components/ui";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import { signOut } from "next-auth/react";
 
 export default function SettingsPage() {
   const { data: session, update } = useSession();
@@ -74,6 +76,15 @@ export default function SettingsPage() {
           <SettingsTab icon={Lock} label="Security" active={activeTab === "security"} onClick={() => setActiveTab("security")} />
           <SettingsTab icon={Bell} label="Notifications" active={activeTab === "notifications"} onClick={() => setActiveTab("notifications")} />
           <SettingsTab icon={Bookmark} label="Saved Cases" active={activeTab === "saved"} onClick={() => setActiveTab("saved")} />
+          <div className="mt-4 pt-4 border-t border-slate-100">
+            <button 
+              onClick={() => { if(confirm("Sign out of DoctorNet?")) signOut({ callbackUrl: "/" }); }}
+              className="flex items-center gap-3 p-4 rounded-2xl w-full text-red-500 hover:bg-red-50 transition-all font-bold"
+            >
+              <LogOut size={20} />
+              <span>Sign Out</span>
+            </button>
+          </div>
         </div>
 
         {/* Main Content */}

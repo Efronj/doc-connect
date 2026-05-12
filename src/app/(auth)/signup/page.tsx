@@ -146,18 +146,17 @@ export default function SignupPage() {
       <div className="auth-form-container">
         
         {/* Mobile Logo */}
-        <div className="hidden lg-hidden mb-10 flex flex-col items-center">
-          <div className="icon-box mb-4">
+        <div className="lg:hidden mb-10 flex flex-col items-center">
+          <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center text-white mb-4 shadow-lg shadow-blue-200">
             <Stethoscope size={32} />
           </div>
-          <h2 className="text-3xl font-black text-slate-900">DoctorNet</h2>
+          <h2 className="text-3xl font-black text-slate-900 tracking-tighter">DoctorNet</h2>
         </div>
 
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="auth-card"
-          style={{ maxWidth: "600px" }}
         >
           <div className="mb-10 text-center">
             <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-2">Create Account</h2>

@@ -141,14 +141,21 @@ export default function LoginPage() {
       </div>
 
       {/* Right Side: Attractive Login Form */}
-      <div className="auth-form-container" style={{ backgroundColor: "var(--bg-alt)" }}>
+      <div className="auth-form-container">
         
+        {/* Mobile Logo */}
+        <div className="lg:hidden mb-8 flex flex-col items-center">
+          <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center text-white mb-4 shadow-lg shadow-blue-200">
+            <Stethoscope size={32} />
+          </div>
+          <h2 className="text-3xl font-black text-slate-900 tracking-tighter">DoctorNet</h2>
+        </div>
+
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "circOut" }}
           className="auth-card"
-          style={{ padding: "4rem", borderRadius: "3rem", boxShadow: "0 40px 100px -20px rgba(0,0,0,0.1)" }}
         >
           <div className="mb-12 text-center">
             <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-3">Welcome Back</h2>

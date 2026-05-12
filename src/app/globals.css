@@ -126,4 +126,49 @@
     margin-bottom: 1.5rem !important;
     border-radius: 1.75rem !important;
   }
+
+  .auth-container {
+    flex-direction: column !important;
+  }
+
+  .auth-sidebar {
+    display: none !important;
+  }
+
+  .auth-form-container {
+    padding: 1.5rem !important;
+  }
+
+  .auth-card {
+    padding: 2rem !important;
+    border-radius: 2rem !important;
+  }
+}
+
+.auth-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.auth-sidebar {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5rem;
+  color: white;
+}
+
+.auth-form-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 550px;
+  background: white;
 }
