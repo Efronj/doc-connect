@@ -33,7 +33,9 @@ export default function MessagesPage() {
   useEffect(() => {
     const newSocket = io(SOCKET_URL);
     setSocket(newSocket);
-    return () => newSocket.close();
+    return () => {
+      newSocket.close();
+    };
   }, []);
 
   useEffect(() => {
@@ -42,7 +44,9 @@ export default function MessagesPage() {
       socket.on("receive-message", (message: any) => {
         setMessages((prev) => [...prev, message]);
       });
-      return () => socket.off("receive-message");
+      return () => {
+        socket.off("receive-message");
+      };
     }
   }, [socket, activeChat]);
 
