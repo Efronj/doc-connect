@@ -117,19 +117,22 @@ export default function HomePage() {
                 style={{ fontSize: "1.25rem", fontWeight: 500 }}
               />
 
-              <div className="flex gap-2 mb-4">
+              <div className="flex p-1.5 bg-slate-100 rounded-2xl w-fit mb-6 gap-1">
                 <PostTypeBtn 
-                  label="Post" 
+                  label="Insight" 
+                  icon={<MessageCircle size={16} />}
                   active={postType === "POST"} 
                   onClick={() => setPostType("POST")} 
                 />
                 <PostTypeBtn 
-                  label="Medical Doubt" 
+                  label="Doubt" 
+                  icon={<HelpCircle size={16} />}
                   active={postType === "DOUBT"} 
                   onClick={() => setPostType("DOUBT")} 
                 />
                 <PostTypeBtn 
                   label="Case Study" 
+                  icon={<Activity size={16} />}
                   active={postType === "CASE"} 
                   onClick={() => setPostType("CASE")} 
                 />
@@ -456,13 +459,18 @@ function PostCard({ id, author, specialty, content, time, likes, comments, type,
   );
 }
 
-function PostTypeBtn({ label, active, onClick }: any) {
+function PostTypeBtn({ label, icon, active, onClick }: any) {
   return (
     <button 
       onClick={onClick}
-      className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${active ? 'bg-blue-600 text-white shadow-lg' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
+      className={`px-3 lg:px-5 py-2 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
+        active 
+          ? 'bg-white text-blue-600 shadow-sm ring-1 ring-slate-200' 
+          : 'text-slate-500 hover:text-slate-900'
+      }`}
     >
-      {label}
+      {icon}
+      <span>{label}</span>
     </button>
   );
 }
