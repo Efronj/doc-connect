@@ -336,14 +336,13 @@ function PostCard({ id, author, specialty, content, time, likes, comments, type,
   );
 }
 
- f u n c t i o n   P o s t T y p e B t n ( {   l a b e l ,   a c t i v e ,   o n C l i c k   } :   a n y )   { 
-     r e t u r n   ( 
-         < b u t t o n   
-             o n C l i c k = { o n C l i c k } 
-             c l a s s N a m e = { \ p x - 4   p y - 2   r o u n d e d - x l   t e x t - x s   f o n t - b l a c k   u p p e r c a s e   t r a c k i n g - w i d e s t   t r a n s i t i o n - a l l   \ \ } 
-         > 
-             { l a b e l } 
-         < / b u t t o n > 
-     ) ; 
- }  
- 
+function PostTypeBtn({ label, active, onClick }: any) {
+  return (
+    <button 
+      onClick={onClick}
+      className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${active ? 'bg-blue-600 text-white shadow-lg' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
+    >
+      {label}
+    </button>
+  );
+}
