@@ -68,19 +68,19 @@ export default function OnboardingPage() {
   const currentStepIndex = steps.indexOf(step);
 
   return (
-    <div className="onboarding-container" style={{ backgroundColor: "#fcfdff", minHeight: "100vh", padding: "4rem 2rem" }}>
-      <div style={{ maxWidth: "48rem", width: "100%", margin: "0 auto" }}>
+    <div className="onboarding-container" style={{ backgroundColor: "#fcfdff", minHeight: "100vh", padding: "2rem 1rem" }}>
+      <div style={{ maxWidth: "42rem", width: "100%", margin: "0 auto" }}>
         
         {/* Progress Header */}
-        <div style={{ textAlign: "center", marginBottom: "4rem" }}>
-          <div className="flex justify-center items-center gap-4 mb-6">
+        <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+          <div className="flex justify-center items-center gap-3 mb-6">
             {steps.map((s, i) => (
               <div key={s} className="flex items-center gap-2">
                 <div 
-                  className={`flex items-center justify-center font-bold text-sm transition-all`}
+                  className={`flex items-center justify-center font-bold text-xs transition-all`}
                   style={{ 
-                    width: "2.5rem", 
-                    height: "2.5rem", 
+                    width: "2.25rem", 
+                    height: "2.25rem", 
                     borderRadius: "50%", 
                     backgroundColor: i <= currentStepIndex ? "#2563eb" : "white",
                     color: i <= currentStepIndex ? "white" : "#94a3b8",
@@ -88,10 +88,10 @@ export default function OnboardingPage() {
                     boxShadow: i === currentStepIndex ? "0 0 0 4px #dbeafe" : "none"
                   }}
                 >
-                  {i < currentStepIndex ? <Check size={16} /> : i + 1}
+                  {i < currentStepIndex ? <Check size={14} /> : i + 1}
                 </div>
                 {i < steps.length - 1 && (
-                  <div style={{ width: "3rem", height: "2px", backgroundColor: i < currentStepIndex ? "#2563eb" : "#e2e8f0" }} />
+                  <div style={{ width: "2.5rem", height: "2px", backgroundColor: i < currentStepIndex ? "#2563eb" : "#e2e8f0" }} />
                 )}
               </div>
             ))}
@@ -105,16 +105,16 @@ export default function OnboardingPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5, ease: "circOut" }}
-            className="premium-card p-12"
+            className="premium-card p-8 lg:p-12"
           >
             {step === "role" && (
               <div className="flex-col gap-8">
-                <div className="text-center mb-10">
-                  <h1 className="text-4xl font-black text-slate-900 mb-3 tracking-tight">What is your medical role?</h1>
-                  <p className="text-slate-500 text-lg font-medium">This helps us tailor your clinical experience</p>
+                <div className="text-center mb-8">
+                  <h1 className="text-3xl lg:text-4xl font-black text-slate-900 mb-2 tracking-tight">Select your role</h1>
+                  <p className="text-slate-500 text-base lg:text-lg font-medium">Tailoring your clinical feed</p>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 lg:gap-6">
                   {ROLES.map((role) => (
                     <CategoryCard 
                       key={role.id}
@@ -128,30 +128,30 @@ export default function OnboardingPage() {
 
                 <Button 
                   onClick={handleNext} 
-                  className="w-full py-6 text-xl mt-12 font-black"
+                  className="w-full py-4 lg:py-6 text-lg lg:text-xl mt-10 font-black"
                   style={{ borderRadius: "1.5rem" }}
                 >
-                  Continue <ChevronRight size={20} style={{ marginLeft: "0.5rem" }} />
+                  Continue <ChevronRight size={18} style={{ marginLeft: "0.5rem" }} />
                 </Button>
               </div>
             )}
 
             {step === "department" && (
               <div className="flex-col gap-8">
-                <div className="text-center mb-10">
-                  <h1 className="text-4xl font-black text-slate-900 mb-3 tracking-tight">Your Department</h1>
-                  <p className="text-slate-500 text-lg font-medium">Connect with peers in your specialty</p>
+                <div className="text-center mb-8">
+                  <h1 className="text-3xl lg:text-4xl font-black text-slate-900 mb-2 tracking-tight">Your Department</h1>
+                  <p className="text-slate-500 text-base lg:text-lg font-medium">Connect with specialist peers</p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3 lg:gap-4">
                   {DEPARTMENTS.map((dept) => (
                     <button
                       key={dept}
                       onClick={() => setFormData({ ...formData, department: dept })}
-                      className={`p-4 rounded-2xl border-2 transition-all font-bold text-left flex items-center justify-between ${formData.department === dept ? 'border-blue-600 bg-blue-50 text-blue-600' : 'border-slate-100 text-slate-500 hover:border-slate-200'}`}
+                      className={`p-3 lg:p-4 rounded-xl lg:rounded-2xl border-2 transition-all font-bold text-sm lg:text-base text-left flex items-center justify-between ${formData.department === dept ? 'border-blue-600 bg-blue-50 text-blue-600' : 'border-slate-100 text-slate-500 hover:border-slate-200'}`}
                     >
                       {dept}
-                      {formData.department === dept && <Check size={18} strokeWidth={3} />}
+                      {formData.department === dept && <Check size={16} strokeWidth={3} />}
                     </button>
                   ))}
                 </div>
@@ -159,37 +159,37 @@ export default function OnboardingPage() {
                 <Button 
                   onClick={handleNext} 
                   disabled={!formData.department}
-                  className="w-full py-6 text-xl mt-12 font-black" 
+                  className="w-full py-4 lg:py-6 text-lg lg:text-xl mt-10 font-black" 
                   style={{ borderRadius: "1.5rem" }}
                 >
-                  Almost There <ChevronRight size={20} style={{ marginLeft: "0.5rem" }} />
+                  Next Step <ChevronRight size={18} style={{ marginLeft: "0.5rem" }} />
                 </Button>
               </div>
             )}
 
             {step === "bio" && (
               <div className="flex-col gap-8">
-                <div className="text-center mb-10">
-                  <h1 className="text-4xl font-black text-slate-900 mb-3 tracking-tight">Professional Bio</h1>
-                  <p className="text-slate-500 text-lg font-medium">Share your medical expertise or interests</p>
+                <div className="text-center mb-8">
+                  <h1 className="text-3xl lg:text-4xl font-black text-slate-900 mb-2 tracking-tight">Professional Bio</h1>
+                  <p className="text-slate-500 text-base lg:text-lg font-medium">Let other doctors know your expertise</p>
                 </div>
 
-                <div className="flex flex-col items-center gap-10">
-                  <div className="relative group">
-                    <div className="w-32 h-32 rounded-[2.5rem] bg-blue-50 flex items-center justify-center text-blue-600 border-4 border-dashed border-blue-200">
-                      <PlusCircle size={40} />
+                <div className="flex flex-col items-center gap-8">
+                  <div className="relative group cursor-pointer">
+                    <div className="w-24 h-24 lg:w-32 lg:h-32 rounded-[2rem] lg:rounded-[2.5rem] bg-blue-50 flex items-center justify-center text-blue-600 border-4 border-dashed border-blue-200">
+                      <PlusCircle size={32} />
                     </div>
-                    <p className="mt-4 text-sm font-bold text-slate-400">Add Professional Photo</p>
+                    <p className="mt-3 text-xs font-bold text-slate-400">Upload Photo</p>
                   </div>
                   
                   <div className="w-full">
-                    <label className="text-sm font-black text-slate-900 px-1 mb-2 block">Tell the community about yourself</label>
+                    <label className="text-sm font-black text-slate-900 px-1 mb-2 block">Tell us about your medical background</label>
                     <textarea 
-                      className="input w-full min-h-[160px] resize-none"
-                      style={{ padding: "1.5rem", fontSize: "1.1rem" }}
+                      className="input w-full min-h-[140px] resize-none"
+                      style={{ padding: "1.25rem", fontSize: "1rem" }}
                       value={formData.bio}
                       onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                      placeholder="e.g. Researching cardiology at Mayo Clinic..."
+                      placeholder="e.g. Cardiologist focused on non-invasive procedures..."
                     />
                   </div>
                 </div>
@@ -197,10 +197,10 @@ export default function OnboardingPage() {
                 <Button 
                   onClick={handleNext} 
                   disabled={loading}
-                  className="w-full py-6 text-xl mt-12 font-black" 
+                  className="w-full py-4 lg:py-6 text-lg lg:text-xl mt-10 font-black" 
                   style={{ borderRadius: "1.5rem" }}
                 >
-                  {loading ? "Finalizing..." : "Complete Setup"}
+                  {loading ? "Saving Profile..." : "Finish Onboarding"}
                 </Button>
               </div>
             )}
