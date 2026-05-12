@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, name, password, username, category, specialty } = body;
+    const { email, name, password, username, role, department } = body;
 
     if (!email || !name || !password || !username) {
       return new NextResponse("Missing information", { status: 400 });
@@ -33,9 +33,8 @@ export async function POST(request: Request) {
         name,
         username,
         password: hashedPassword,
-        category,
-        specialty,
-        role: "DOCTOR"
+        department,
+        role: role || "DOCTOR"
       }
     });
 
