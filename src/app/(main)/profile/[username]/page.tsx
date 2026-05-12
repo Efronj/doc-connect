@@ -13,6 +13,7 @@ import {
   Settings
 } from "lucide-react";
 import { Button } from "@/components/ui";
+import Link from "next/link";
 import { use } from "react";
 
 export default function ProfilePage({ params: paramsPromise }: { params: Promise<{ username: string }> }) {
