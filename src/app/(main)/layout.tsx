@@ -78,8 +78,10 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
               </div>
               <div className="hidden-mobile">
                 <h4 className="font-bold text-sm">{session.user?.name}</h4>
-                {/* @ts-ignore */}
-                <p className="text-slate-400" style={{ fontSize: "0.75rem" }}>{session.user?.specialty || "Medical Professional"}</p>
+                <p className="text-slate-400" style={{ fontSize: "0.75rem" }}>
+                  {/* @ts-ignore */}
+                  {session.user?.role || "DOCTOR"} · {session.user?.department || "General Medicine"}
+                </p>
               </div>
             </div>
             <MoreHorizontal size={18} className="text-slate-400 hidden-mobile" />
@@ -89,22 +91,22 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
       {/* Main Content Area */}
       <main className="main-content">
-        {children}
-      </main>
-
-      {/* Right Sidebar */}
-      <aside className="right-panel">
-        <div className="premium-card" style={{ padding: "1.5rem" }}>
-          <div className="relative">
+        <header className="sticky top-0 bg-slate-50/80 backdrop-blur-xl z-30 p-4 border-b border-slate-100 flex items-center gap-4 mb-6">
+          <div className="relative flex-1">
             <Search className="absolute" style={{ left: "1.25rem", top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} size={18} />
             <input 
               type="text" 
               placeholder="Search medical network..."
               className="input w-full"
-              style={{ paddingLeft: "3.25rem", backgroundColor: "var(--bg-subtle)", borderRadius: "1.25rem" }}
+              style={{ paddingLeft: "3.25rem", backgroundColor: "white", borderRadius: "1.25rem", border: "1px solid #e2e8f0" }}
             />
           </div>
-        </div>
+        </header>
+        {children}
+      </main>
+
+      {/* Right Sidebar */}
+      <aside className="right-panel">
 
         <div className="premium-card" style={{ background: "var(--medical-gradient)", color: "white", padding: "2rem" }}>
           <div className="flex items-center gap-3 mb-4">
