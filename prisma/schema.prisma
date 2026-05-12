@@ -19,6 +19,8 @@ model User {
   hospital      String?
   bio           String?
   location      String?
+  role          String?   @default("DOCTOR")
+  category      String?
   isVerified    Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
