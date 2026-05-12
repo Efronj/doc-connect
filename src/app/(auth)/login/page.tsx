@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 
 import { auth, googleProvider } from "@/lib/firebase";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { signIn } from "next-auth/react";
+import { toast } from "react-hot-toast";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);

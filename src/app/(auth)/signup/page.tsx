@@ -9,6 +9,9 @@ import { useRouter } from "next/navigation";
 
 import { auth, googleProvider } from "@/lib/firebase";
 import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { signIn } from "next-auth/react";
+import axios from "axios";
+import { toast } from "react-hot-toast";
 
 export default function SignupPage() {
   const [loading, setLoading] = useState(false);
