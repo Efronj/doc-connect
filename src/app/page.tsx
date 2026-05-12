@@ -3,14 +3,21 @@
 import { motion } from "framer-motion";
 import { Stethoscope, Users, MessageSquare, Bell, PlusCircle } from "lucide-react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    if (status === "authenticated") {
+      router.push("/home");
+    }
+  }, [status, router]);
 
   if (!mounted) return null;
 
