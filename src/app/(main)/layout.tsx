@@ -91,17 +91,6 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
       {/* Main Content Area */}
       <main className="main-content">
-        <header className="sticky top-0 bg-slate-50/80 backdrop-blur-xl z-30 p-4 border-b border-slate-100 flex items-center gap-4 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute" style={{ left: "1.25rem", top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} size={18} />
-            <input 
-              type="text" 
-              placeholder="Search medical network..."
-              className="input w-full"
-              style={{ paddingLeft: "3.25rem", backgroundColor: "white", borderRadius: "1.25rem", border: "1px solid #e2e8f0" }}
-            />
-          </div>
-        </header>
         {children}
       </main>
 

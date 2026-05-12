@@ -94,14 +94,6 @@ export default function HomePage() {
 
   return (
     <div style={{ paddingBottom: "5rem" }}>
-      <header className="page-header flex items-center justify-between mb-8">
-        <h1 className="text-4xl font-black tracking-tight text-slate-900">Medical Feed</h1>
-        <div className="flex gap-2">
-           <button className="avatar-soft" style={{ width: "2.75rem", height: "2.75rem", borderRadius: "1rem" }}>
-             <Activity size={20} />
-           </button>
-        </div>
-      </header>
 
       {/* Post Creator */}
       {session && (
