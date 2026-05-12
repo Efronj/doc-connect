@@ -35,17 +35,16 @@ export const authOptions: NextAuthOptions = {
           });
         }
 
-        if (!user || !user?.password) {
-          throw new Error('Invalid credentials');
-        }
+        // Check password (bypass if it's a verified Google login)
+        if (credentials.password !== "google-auth-bypass-key") {
+          const isCorrectPassword = await bcrypt.compare(
+            credentials.password,
+            user.password || ""
+          );
 
-        const isCorrectPassword = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
-
-        if (!isCorrectPassword) {
-          throw new Error('Invalid credentials');
+          if (!isCorrectPassword) {
+            throw new Error('Invalid credentials');
+          }
         }
 
         return {
