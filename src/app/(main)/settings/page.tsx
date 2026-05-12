@@ -22,10 +22,10 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: session?.user?.name || "",
-    bio: session?.user?.bio || "",
-    department: session?.user?.department || "",
-    role: session?.user?.role || "DOCTOR",
-    isPrivate: session?.user?.isPrivate || false,
+    bio: (session?.user as any)?.bio || "",
+    department: (session?.user as any)?.department || "",
+    role: (session?.user as any)?.role || "DOCTOR",
+    isPrivate: (session?.user as any)?.isPrivate || false,
   });
 
   const handleUpdate = async () => {
