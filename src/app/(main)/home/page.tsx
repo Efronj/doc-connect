@@ -76,8 +76,7 @@ export default function HomePage() {
         content: postContent,
         // @ts-ignore
         authorId: session.user.id,
-        media: imageUrl,
-        type: postType
+        image: imageUrl
       });
       
       setPostContent("");
@@ -202,8 +201,7 @@ export default function HomePage() {
               time={new Date(post.createdAt).toLocaleDateString()}
               likes={post.likes?.length || 0}
               comments={post._count?.comments || 0}
-              image={post.media}
-              type={post.type}
+              image={post.image}
               authorId={post.authorId}
             />
           ))
@@ -313,7 +311,7 @@ function PostCard({ id, author, specialty, content, time, likes, comments, type,
       id: Date.now().toString(),
       content: commentInput,
       createdAt: new Date().toISOString(),
-      user: {
+      author: {
         name: "You",
         role: "DOCTOR"
       }
@@ -404,11 +402,7 @@ function PostCard({ id, author, specialty, content, time, likes, comments, type,
 
       {/* Content */}
       <div className="px-6 pb-4">
-        {type === "DOUBT" && (
-          <div className="mb-4 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-xs font-black uppercase tracking-widest w-fit border border-emerald-100">
-            Medical Doubt
-          </div>
-        )}
+        {/* Clinical cases are displayed below */}
         {isEditing ? (
           <div className="flex flex-col gap-3">
             <textarea 
@@ -516,13 +510,13 @@ function PostCard({ id, author, specialty, content, time, likes, comments, type,
               {commentsList.map((c) => (
                 <div key={c.id} className="flex gap-3 group">
                   <div className="avatar-soft" style={{ width: "2.5rem", height: "2.5rem", flexShrink: 0 }}>
-                    {c.user?.name?.[0] || "U"}
+                    {c.author?.name?.[0] || "U"}
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-black text-sm text-slate-900">{c.user?.name}</span>
+                      <span className="font-black text-sm text-slate-900">{c.author?.name}</span>
                       <span className="px-1.5 py-0.5 rounded-md bg-slate-100 text-[9px] font-black uppercase text-slate-500">
-                        {c.user?.role || "DOCTOR"}
+                        {c.author?.role || "DOCTOR"}
                       </span>
                       <span className="text-[10px] text-slate-300 font-bold">
                         {new Date(c.createdAt).toLocaleDateString()}
@@ -532,7 +526,7 @@ function PostCard({ id, author, specialty, content, time, likes, comments, type,
                       {c.content}
                     </p>
                   </div>
-                  {(session?.user as any)?.id === c.userId && (
+                  {(session?.user as any)?.id === c.authorId && (
                     <button 
                       onClick={() => handleDeleteComment(c.id)}
                       className="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 transition-all p-2"

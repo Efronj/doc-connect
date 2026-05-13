@@ -35,7 +35,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const { content, authorId, type, media } = await req.json();
+    const { content, authorId, image } = await req.json();
 
     if (!content || !authorId) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -45,8 +45,7 @@ export async function POST(req: Request) {
       data: {
         content,
         authorId,
-        type: type || 'POST',
-        media: media || null,
+        image: image || null,
       }
     });
 

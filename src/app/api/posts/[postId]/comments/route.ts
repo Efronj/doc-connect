@@ -25,10 +25,10 @@ export async function POST(
       data: {
         content,
         postId: postId,
-        userId: (session.user as any).id
+        authorId: (session.user as any).id
       },
       include: {
-        user: {
+        author: {
           select: {
             name: true,
             image: true,
@@ -57,7 +57,7 @@ export async function GET(
         postId: postId
       },
       include: {
-        user: {
+        author: {
           select: {
             name: true,
             image: true,

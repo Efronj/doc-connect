@@ -12,7 +12,7 @@ export async function GET(
       where: {
         OR: [
           { username },
-          { name: { contains: username, mode: 'insensitive' } }
+          { name: { contains: username } }
         ]
       },
       include: {

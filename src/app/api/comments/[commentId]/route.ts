@@ -21,7 +21,7 @@ export async function DELETE(
     
     // Allow deletion if the user is the author of the comment OR the author of the post
     // But for now, let's stick to comment author.
-    if (comment.userId !== (session.user as any).id) {
+    if (comment.authorId !== (session.user as any).id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 

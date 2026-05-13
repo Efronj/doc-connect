@@ -14,7 +14,7 @@ import {
   Activity,
   Heart
 } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "react-hot-toast";
@@ -212,7 +212,7 @@ function CategoryCard({ title, icon, selected, onClick }: any) {
       <div 
         className={`w-12 h-12 lg:w-20 lg:h-20 rounded-xl lg:rounded-3xl flex items-center justify-center mb-3 lg:mb-4 transition-colors ${selected ? "bg-blue-600 text-white" : "bg-blue-50 text-blue-600 group-hover:bg-blue-100"}`}
       >
-        {React.cloneElement(icon as React.ReactElement, { size: typeof window !== 'undefined' && window.innerWidth < 1024 ? 24 : 32 })}
+        {icon}
       </div>
       <h3 className={`font-black text-xs lg:text-sm tracking-tight ${selected ? "text-blue-600" : "text-slate-600"}`}>{title}</h3>
     </div>

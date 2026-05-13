@@ -161,8 +161,8 @@ export default function ProfilePage({ params: paramsPromise }: { params: Promise
         <div className="grid grid-cols-3 gap-0.5 lg:gap-1 mt-1 px-0.5 lg:px-1">
           {userPosts.map((post) => (
             <div key={post.id} className="relative aspect-square bg-slate-100 overflow-hidden cursor-pointer group">
-              {post.media ? (
-                <img src={post.media} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              {post.image ? (
+                <img src={post.image} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center p-2 lg:p-4 text-center">
                   <p className="text-[8px] lg:text-[10px] font-bold text-slate-400 line-clamp-3">{post.content}</p>
