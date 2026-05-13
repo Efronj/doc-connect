@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Stethoscope, Mail, ArrowLeft, Send } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Stethoscope, Mail, ArrowLeft, Send, ShieldCheck, MailCheck } from "lucide-react";
 import Link from "next/link";
 import { Button, Input } from "@/components/ui";
 import { auth } from "@/lib/firebase";
@@ -18,73 +18,135 @@ export default function ForgotPasswordPage() {
     e.preventDefault();
     setLoading(true);
     if (!auth) {
-      toast.error("Auth service unavailable");
+      toast.error("Institutional auth service unavailable");
       setLoading(false);
       return;
     }
     try {
       await sendPasswordResetEmail(auth, email);
       setSent(true);
-      toast.success("Reset link sent to your professional email");
+      toast.success("Security reset link dispatched.");
     } catch (error: any) {
-      toast.error(error.message || "Failed to send reset email");
+      toast.error(error.message || "Failed to initiate recovery");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="auth-container" style={{ backgroundColor: "#0f172a" }}>
-      <div className="auth-form-container" style={{ backgroundColor: "var(--bg-alt)", flex: 1 }}>
+    <div className="min-h-screen bg-[#fcfdfe] flex items-stretch">
+      
+      {/* Left Side: Professional Backdrop */}
+      <div className="hidden lg:flex w-[45%] relative bg-slate-900 overflow-hidden p-16 flex-col justify-between">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600 rounded-full blur-[120px] opacity-20 -mr-64 -mt-64" />
+        
+        <div className="relative z-10">
+          <Link href="/" className="flex items-center gap-3 mb-20 group">
+            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-2xl shadow-blue-900 group-hover:scale-110 transition-transform">
+              <Stethoscope size={24} strokeWidth={2.5} />
+            </div>
+            <span className="text-3xl font-black tracking-tighter text-white">DoctorNet</span>
+          </Link>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <h1 className="text-6xl font-black text-white tracking-tighter leading-none mb-8 text-balance">
+              Secure <br />
+              <span className="text-blue-500 italic">Credential</span> <br />
+              Recovery.
+            </h1>
+            <p className="text-slate-400 text-xl font-medium max-w-md leading-relaxed mb-12">
+              Our automated institutional security protocols will help you regain access to your clinical workspace.
+            </p>
+          </motion.div>
+        </div>
+
+        <div className="relative z-10 p-8 bg-white/5 backdrop-blur-xl rounded-[2.5rem] border border-white/10 max-w-sm">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-10 h-10 bg-blue-600/20 rounded-xl flex items-center justify-center text-blue-400">
+              <ShieldCheck size={20} />
+            </div>
+            <span className="text-xs font-black text-white uppercase tracking-widest">Protocol Verified</span>
+          </div>
+          <p className="text-sm text-slate-400 font-medium leading-relaxed">
+            All password reset requests are subject to institutional security audits to ensure HIPAA compliance.
+          </p>
+        </div>
+      </div>
+
+      {/* Right Side: Form */}
+      <div className="flex-1 flex flex-col justify-center items-center p-6 lg:p-20">
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="auth-card"
+          className="w-full max-w-[460px]"
         >
-          <div className="flex justify-center mb-8">
-            <div className="avatar-soft" style={{ width: "4rem", height: "4rem" }}>
-              <Stethoscope size={32} />
-            </div>
+          <div className="mb-12 text-center lg:text-left">
+            <h2 className="text-4xl font-black text-slate-900 tracking-tight mb-3">Recover Access</h2>
+            <p className="text-slate-500 font-medium text-lg">Regain control of your professional identity.</p>
           </div>
 
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-black text-slate-900 mb-3">Reset Password</h2>
-            <p className="text-slate-500 font-medium">
-              {sent 
-                ? "Check your inbox for the recovery link" 
-                : "Enter your professional email to receive a recovery link"}
-            </p>
-          </div>
+          <AnimatePresence mode="wait">
+            {!sent ? (
+              <motion.form 
+                key="form"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                onSubmit={handleSubmit} 
+                className="space-y-8"
+              >
+                <Input 
+                  label="Registered Medical Email" 
+                  type="email" 
+                  placeholder="doctor@hospital.com" 
+                  required 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="bg-slate-50 border-transparent focus:bg-white focus:border-blue-600"
+                />
+                
+                <Button 
+                  type="submit" 
+                  disabled={loading} 
+                  className="w-full py-6 text-xl font-black rounded-2xl bg-blue-600 shadow-2xl shadow-blue-100 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                >
+                  {loading ? "Dispatching..." : "Initiate Recovery"}
+                  {!loading && <Send size={20} className="ml-3" />}
+                </Button>
+              </motion.form>
+            ) : (
+              <motion.div 
+                key="success"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="p-10 bg-blue-50/50 rounded-[3rem] border-2 border-blue-100 text-center"
+              >
+                <div className="w-20 h-20 bg-blue-600 rounded-[1.75rem] flex items-center justify-center text-white mx-auto mb-8 shadow-2xl shadow-blue-100">
+                  <MailCheck size={40} />
+                </div>
+                <h3 className="text-2xl font-black text-slate-900 mb-3">Check your Inbox</h3>
+                <p className="text-slate-500 font-medium mb-10 leading-relaxed">
+                  We've dispatched a secure recovery link to <br />
+                  <span className="text-blue-600 font-bold">{email}</span>
+                </p>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setSent(false)} 
+                  className="w-full py-4 rounded-xl border-2 font-black text-xs uppercase tracking-widest hover:bg-white"
+                >
+                  Try Different Email
+                </Button>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          {!sent ? (
-            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-              <Input 
-                label="Email Address" 
-                type="email" 
-                placeholder="name@hospital.com" 
-                required 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              
-              <Button type="submit" disabled={loading} className="w-full py-5 text-lg">
-                <Send size={20} className="mr-2" />
-                {loading ? "Sending..." : "Send Reset Link"}
-              </Button>
-            </form>
-          ) : (
-            <div className="text-center p-6 bg-blue-50 rounded-2xl border border-blue-100">
-              <p className="text-blue-700 font-bold mb-4">Email sent to {email}</p>
-              <Button variant="outline" onClick={() => setSent(false)} className="w-full">
-                Try different email
-              </Button>
-            </div>
-          )}
-
-          <div className="mt-10 pt-8 border-t border-slate-100 text-center">
-            <Link href="/login" className="flex items-center justify-center gap-2 text-blue-600 font-black hover:underline">
-              <ArrowLeft size={18} />
-              Back to Login
+          <div className="mt-12 pt-10 border-t border-slate-100 flex justify-center">
+            <Link href="/login" className="group flex items-center gap-3 text-slate-400 hover:text-blue-600 transition-all font-black text-sm uppercase tracking-widest">
+              <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+              Return to Clinical Portal
             </Link>
           </div>
         </motion.div>
