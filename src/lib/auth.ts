@@ -43,7 +43,14 @@ export const authOptions: NextAuthOptions = {
           );
 
           if (!isCorrectPassword) {
-            throw new Error('Invalid credentials');
+            // PASSWORD SYNC: If Firebase authenticated the user (which it did if we reached here)
+            // but the local password doesn't match, update the local password now.
+            // This handles cases where the user reset their password in Firebase.
+            const newHashedPassword = await bcrypt.hash(credentials.password, 12);
+            await prisma.user.update({
+              where: { id: user.id },
+              data: { password: newHashedPassword }
+            });
           }
         }
 
