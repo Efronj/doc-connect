@@ -13,7 +13,8 @@ import {
   Bookmark,
   Users,
   Activity,
-  Shield
+  Shield,
+  LogOut
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -36,57 +37,68 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   ];
 
   return (
-    <div className="app-container">
+    <div className="app-container bg-[#fcfdfe]">
       
       {/* Sidebar Navigation */}
-      <aside className="sidebar">
-        <div className="flex-col gap-10">
-          <Link href="/home" className="flex items-center gap-3 px-2">
-            <div className="avatar-soft" style={{ width: "3rem", height: "3rem", borderRadius: "1rem" }}>
-              <Stethoscope size={24} />
+      <aside className="sidebar border-r border-slate-100/50 bg-white">
+        <div className="flex flex-col gap-12 h-full py-8">
+          <Link href="/home" className="flex items-center gap-4 px-4 group">
+            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-blue-100 group-hover:scale-110 transition-transform">
+              <Stethoscope size={24} strokeWidth={2.5} />
             </div>
-            <span className="text-2xl font-black tracking-tighter">DoctorNet</span>
+            <span className="text-2xl font-black tracking-tighter text-slate-900">DoctorNet</span>
           </Link>
  
-          <nav className="flex-col">
+          <nav className="flex flex-col gap-2 px-2">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
-                <Link key={item.label} href={item.href} className={`nav-link ${isActive ? "active" : ""}`}>
-                  <item.icon size={22} />
+                <Link 
+                  key={item.label} 
+                  href={item.href} 
+                  className={`flex items-center gap-4 px-4 py-4 rounded-2xl transition-all font-bold ${isActive ? "bg-blue-50 text-blue-600 shadow-sm" : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"}`}
+                >
+                  <item.icon size={22} strokeWidth={isActive ? 2.5 : 2} />
                   <span className="hidden-mobile">{item.label}</span>
                 </Link>
               );
             })}
           </nav>
  
-          <Button className="w-full py-5 text-lg hidden-mobile shadow-premium" style={{ borderRadius: "1.5rem" }}>
-            <Plus size={20} style={{ marginRight: "0.5rem" }} /> Share Case
-          </Button>
-        </div>
- 
-        {/* User Profile Mini */}
-        {session && (
-          <div 
-            onClick={() => { if(confirm("Do you want to sign out?")) signOut(); }}
-            className="mt-auto p-4 flex items-center justify-between cursor-pointer hover-bg-subtle" 
-            style={{ borderRadius: "1.5rem", transition: "var(--transition)" }}
-          >
-            <div className="flex items-center gap-3">
-              <div className="avatar-soft" style={{ width: "2.75rem", height: "2.75rem", fontSize: "0.8rem" }}>
-                {session.user?.name?.[0] || "U"}
-              </div>
-              <div className="hidden-mobile">
-                <h4 className="font-bold text-sm">{session.user?.name}</h4>
-                <p className="text-slate-400" style={{ fontSize: "0.75rem" }}>
-                  {/* @ts-ignore */}
-                  {session.user?.role || "DOCTOR"} · {session.user?.department || "General Medicine"}
-                </p>
+          <div className="px-4 mt-4">
+            <Button className="w-full py-6 text-lg hidden-mobile shadow-xl shadow-blue-100 bg-blue-600 hover:bg-blue-700 rounded-2xl">
+              <Plus size={20} className="mr-2" /> Share Case
+            </Button>
+          </div>
+
+          {/* User Profile Mini */}
+          {session && (
+            <div className="mt-auto px-2">
+              <div 
+                className="p-3 flex items-center justify-between rounded-2xl hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100 group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white font-black text-xs shadow-lg">
+                    {session.user?.name?.[0] || "U"}
+                  </div>
+                  <div className="hidden-mobile">
+                    <h4 className="font-bold text-sm text-slate-900">{session.user?.name}</h4>
+                    <p className="text-slate-400 font-bold" style={{ fontSize: "10px" }}>
+                      {session.user.role || "DOCTOR"}
+                    </p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="p-2 text-slate-400 hover:text-red-500 transition-colors hidden-mobile"
+                  title="Logout"
+                >
+                  <LogOut size={18} />
+                </button>
               </div>
             </div>
-            <MoreHorizontal size={18} className="text-slate-400 hidden-mobile" />
-          </div>
-        )}
+          )}
+        </div>
       </aside>
 
       {/* Main Content Area */}
@@ -95,29 +107,49 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       </main>
 
       {/* Right Sidebar */}
-      <aside className="right-panel">
+      <aside className="right-panel flex flex-col gap-8 py-8">
 
-        <div className="premium-card" style={{ background: "var(--medical-gradient)", color: "white", padding: "2rem" }}>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 glass rounded-xl">
-              <Activity size={24} />
+        {/* AI Assistant Card */}
+        <div className="relative group overflow-hidden bg-slate-900 rounded-[2.5rem] p-8 shadow-2xl">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600 rounded-full blur-[80px] opacity-40 group-hover:opacity-60 transition-opacity" />
+          
+          <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 bg-white/10 backdrop-blur-xl rounded-2xl flex items-center justify-center text-blue-400 border border-white/10">
+                <Activity size={24} />
+              </div>
+              <h3 className="font-black text-white text-xl tracking-tight">Clinical AI</h3>
             </div>
-            <h3 className="font-bold text-lg">AI Clinical Assistant</h3>
+            
+            <p className="text-blue-100/70 text-sm mb-8 leading-relaxed font-medium">
+              Analyze complex case histories and check global clinical research in seconds.
+            </p>
+            
+            <Button className="w-full py-4 bg-white text-slate-900 hover:bg-blue-50 font-black rounded-2xl transition-all">
+              Launch Assistant
+            </Button>
           </div>
-          <p className="text-sm opacity-90 mb-6 leading-relaxed">Instantly analyze complex case studies and check global research data.</p>
-          <Button variant="outline" className="w-full py-4" style={{ backgroundColor: "rgba(255,255,255,0.15)", color: "white", borderColor: "rgba(255,255,255,0.3)", backdropFilter: "blur(4px)" }}>
-            Launch Assistant
-          </Button>
         </div>
 
-        <div className="premium-card">
-          <h3 className="font-black text-xl mb-6 tracking-tight">Clinical Trends</h3>
-          <div className="flex-col gap-6">
+        {/* Trends Section */}
+        <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="font-black text-slate-900 text-xl tracking-tight">Clinical Trends</h3>
+            <div className="px-2 py-1 bg-slate-50 rounded-lg text-[10px] font-black text-slate-400 uppercase tracking-widest">Global</div>
+          </div>
+          
+          <div className="flex flex-col gap-6">
             <TrendItem category="Cardiology" tag="#AorticStenosis" posts="2.1k" />
             <TrendItem category="Neurology" tag="#StrokeProtocol" posts="1.8k" />
             <TrendItem category="Surgery" tag="#RoboticAssisted" posts="950" />
+            <TrendItem category="Pediatrics" tag="#NeonatalCare" posts="740" />
           </div>
+
+          <button className="w-full mt-8 py-3 text-sm font-black text-blue-600 hover:bg-blue-50 rounded-xl transition-colors">
+            View All Trends
+          </button>
         </div>
+
       </aside>
 
       {/* Mobile Bottom Navigation */}
@@ -132,7 +164,6 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       </nav>
 
       <style jsx>{`
-        .hover-bg-alt:hover { background-color: var(--bg-alt); }
         @media (max-width: 1023px) {
           .hidden-mobile { display: none !important; }
         }
@@ -143,28 +174,13 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
 function TrendItem({ category, tag, posts }: any) {
   return (
-    <div style={{ cursor: "pointer" }} className="group">
-      <div className="flex justify-between text-xs text-slate-400 font-bold mb-1">
-        <span>{category} · Trending</span>
-        <MoreHorizontal size={14} />
+    <div className="group cursor-pointer">
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-[10px] font-black text-blue-600/60 uppercase tracking-widest">{category}</span>
+        <MoreHorizontal size={14} className="text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
-      <h4 className="font-bold text-slate-800" style={{ fontSize: "1rem" }}>{tag}</h4>
-      <p className="text-xs text-slate-400 mt-1">{posts} posts</p>
-    </div>
-  );
-}
-
-function DoctorSuggest({ name, specialty }: any) {
-  return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-3">
-        <div className="avatar" style={{ width: "2.5rem", height: "2.5rem" }} />
-        <div>
-          <h4 className="font-bold text-sm" style={{ lineHeight: 1.2 }}>{name}</h4>
-          <p className="text-slate-400" style={{ fontSize: "0.7rem" }}>{specialty}</p>
-        </div>
-      </div>
-      <Button variant="primary" style={{ padding: "0.4rem 1rem", fontSize: "0.75rem", borderRadius: "9999px" }}>Follow</Button>
+      <h4 className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{tag}</h4>
+      <p className="text-[10px] font-bold text-slate-400 mt-1">{posts} practitioners discussing</p>
     </div>
   );
 }
