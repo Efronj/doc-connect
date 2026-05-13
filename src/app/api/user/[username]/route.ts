@@ -11,8 +11,8 @@ export async function GET(
     const user = await prisma.user.findFirst({
       where: {
         OR: [
-          { username },
-          { name: { contains: username } }
+          { username: { equals: username, mode: 'insensitive' } },
+          { name: { contains: username, mode: 'insensitive' } }
         ]
       },
       include: {
