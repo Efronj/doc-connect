@@ -43,7 +43,7 @@ export default function SignupPage() {
       
       if (syncResult?.ok) {
         toast.success("Welcome, Doctor!");
-        router.push("/home");
+        router.push("/onboarding");
       } else {
         toast.error(syncResult?.error || "Session sync failed");
       }
@@ -77,7 +77,7 @@ export default function SignupPage() {
         formData.password
       );
 
-      // 2. Save user data to our MongoDB database (silent)
+      // 2. Save user data to our database (silent)
       try {
         await axios.post("/api/register", {
           ...formData,
@@ -89,12 +89,13 @@ export default function SignupPage() {
 
       toast.success("Account created successfully!");
       
-      // 3. Sign in to the local session
+      // 3. Sign in to the local session and go to onboarding
       await signIn("credentials", {
         email: formData.email,
         password: formData.password,
-        callbackUrl: "/home"
+        callbackUrl: "/onboarding"
       });
+
 
     } catch (error: any) {
       toast.error(error.message || "Failed to create account");

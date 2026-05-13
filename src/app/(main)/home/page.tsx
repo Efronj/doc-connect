@@ -20,6 +20,7 @@ import {
 import { Button } from "@/components/ui";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 
@@ -32,6 +33,7 @@ export default function HomePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const router = useRouter();
 
   const fetchPosts = async () => {
     try {
@@ -45,8 +47,15 @@ export default function HomePage() {
   };
 
   useEffect(() => {
+    if (session?.user) {
+      // @ts-ignore
+      if (!session.user.department && !session.user.role) {
+        router.push("/onboarding");
+        return;
+      }
+    }
     fetchPosts();
-  }, []);
+  }, [session, router]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
