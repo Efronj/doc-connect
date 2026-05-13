@@ -24,12 +24,21 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className = "", label, error, ...props }, ref) => {
+  ({ className = "", label, error, id, required, ...props }, ref) => {
+    const inputId = id || (label ? label.toLowerCase().replace(/\s+/g, '-') : undefined);
+    
     return (
       <div className="input-group">
-        {label && <label className="label">{label}</label>}
+        {label && (
+          <label htmlFor={inputId} className="label flex items-center justify-between">
+            {label}
+            {required && <span className="text-blue-600 text-xs font-black ml-1">*</span>}
+          </label>
+        )}
         <input
           ref={ref}
+          id={inputId}
+          required={required}
           className={`input ${className} ${error ? "input-error" : ""}`}
           {...props}
         />

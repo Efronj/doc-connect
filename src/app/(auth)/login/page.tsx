@@ -154,12 +154,13 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
             />
             
-            <div className="flex flex-col gap-2 mb-2">
-              <div className="flex justify-between px-1">
-                <label className="text-sm font-bold text-slate-700">Password</label>
+            <div className="mb-2">
+              <div className="flex justify-between px-1 mb-2">
+                <label htmlFor="password-input" className="text-sm font-black text-slate-700 uppercase tracking-wider cursor-pointer">Password</label>
                 <Link href="/forgot-password" title="Forgot Password" className="text-xs text-blue-600 font-black hover:underline">Reset Password</Link>
               </div>
               <Input 
+                id="password-input"
                 type="password" 
                 placeholder="••••••••" 
                 required 

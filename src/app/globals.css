@@ -63,6 +63,26 @@
   .input-minimal {
     @apply w-full py-2.5 px-4 bg-slate-50 border border-slate-100 rounded-xl text-sm transition-all focus:outline-none focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-50;
   }
+
+  .input-group {
+    @apply flex flex-col gap-2 mb-4;
+  }
+
+  .label {
+    @apply text-sm font-black text-slate-700 px-1 uppercase tracking-wider;
+  }
+
+  .input {
+    @apply w-full py-4 px-5 bg-slate-50 border border-slate-100 rounded-2xl text-base transition-all focus:outline-none focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-50 placeholder:text-slate-400;
+  }
+
+  .input-error {
+    @apply border-red-500 focus:border-red-500 focus:ring-red-50;
+  }
+
+  .error-text {
+    @apply text-xs font-bold text-red-500 px-1 mt-1;
+  }
 }
 
 /* Utilities for simple transitions */
@@ -141,7 +161,7 @@
   }
 
   .auth-card {
-    padding: 2rem 1rem !important;
+    padding: 3rem 1.5rem !important;
     box-shadow: none !important;
     border-radius: 0 !important;
   }
