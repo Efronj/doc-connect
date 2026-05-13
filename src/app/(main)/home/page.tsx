@@ -49,9 +49,7 @@ export default function HomePage() {
 
   useEffect(() => {
     if (session?.user) {
-      // @ts-ignore
-      const user = session.user;
-      if (!user.department) {
+      if (!session.user.department) {
         router.push("/onboarding");
         return;
       }

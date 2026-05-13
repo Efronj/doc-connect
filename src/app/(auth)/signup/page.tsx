@@ -41,7 +41,7 @@ export default function SignupPage() {
       
       if (syncResult?.ok) {
         const session = await getSession();
-        if (session?.user && (session.user as any).department) {
+        if (session?.user && session.user.department) {
           router.push("/home");
         } else {
           router.push("/onboarding");

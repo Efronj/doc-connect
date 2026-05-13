@@ -36,7 +36,7 @@ export default function LoginPage() {
       
       if (syncResult?.ok) {
         const session = await getSession();
-        if (session?.user && !(session.user as any).department) {
+        if (session?.user && !session.user.department) {
           router.push("/onboarding");
         } else {
           router.push("/home");
@@ -72,7 +72,7 @@ export default function LoginPage() {
 
       if (callback?.ok) {
         const session = await getSession();
-        if (session?.user && !(session.user as any).department) {
+        if (session?.user && !session.user.department) {
           router.push("/onboarding");
         } else {
           router.push("/home");
