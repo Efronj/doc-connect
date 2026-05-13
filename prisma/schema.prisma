@@ -3,61 +3,87 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  id            String    @id @default(cuid())
   name          String?
-  email         String?   @unique
   username      String?   @unique
-  password      String?
+  email         String?   @unique
+  emailVerified DateTime?
   image         String?
-  role          String?   @default("DOCTOR") // DOCTOR, STUDENT, SPECIALIST
-  department    String?   // Cardiology, Surgery, etc.
+  password      String?
+  role          String    @default("DOCTOR")
+  department    String?
   bio           String?
   hospital      String?
   isPrivate     Boolean   @default(false)
-  savedPostIds  String[]  @db.ObjectId
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
   posts         Post[]
-  likes         Like[]
   comments      Comment[]
+  likes         Like[]
+  followers     Follows[] @relation("following")
+  following     Follows[] @relation("follower")
+  notifications Notification[]
 }
 
 model Post {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  id        String    @id @default(cuid())
   content   String
-  media     String?
-  type      String    @default("POST") // POST, DOUBT, CASE
+  image     String?
+  authorId  String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  authorId  String    @db.ObjectId
   author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
-
-  likes     Like[]
   comments  Comment[]
-}
-
-model Like {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String   @db.ObjectId
-  postId    String   @db.ObjectId
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  likes     Like[]
 }
 
 model Comment {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(cuid())
   content   String
+  postId    String
+  authorId  String
   createdAt DateTime @default(now())
-  
-  userId    String   @db.ObjectId
-  postId    String   @db.ObjectId
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+}
+
+model Follows {
+  followerId  String
+  followingId String
+
+  follower  User @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@id([followerId, followingId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

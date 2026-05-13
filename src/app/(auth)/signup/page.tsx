@@ -25,12 +25,11 @@ export default function SignupPage() {
   const router = useRouter();
 
   const handleGoogleSignUp = async () => {
-    setLoading(true);
     if (!auth) {
-      toast.error("Auth service unavailable");
-      setLoading(false);
+      toast.error("Firebase keys missing in .env - Please configure them for Google Sign-up");
       return;
     }
+    setLoading(true);
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
@@ -65,7 +64,7 @@ export default function SignupPage() {
     setLoading(true);
 
     if (!auth) {
-      toast.error("Auth service unavailable");
+      toast.error("Firebase keys missing in .env - Account creation requires Firebase");
       setLoading(false);
       return;
     }

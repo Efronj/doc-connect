@@ -19,17 +19,15 @@ export default function LoginPage() {
   const router = useRouter();
 
   const handleGoogleSignIn = async () => {
-    setLoading(true);
     if (!auth) {
-      toast.error("Auth service unavailable");
-      setLoading(false);
+      toast.error("Firebase keys missing in .env - Please configure them for Google Login");
       return;
     }
+    setLoading(true);
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
 
-      // Sync with NextAuth
       const syncResult = await signIn("credentials", {
         email: user.email,
         password: "google-auth-bypass-key",
@@ -49,12 +47,13 @@ export default function LoginPage() {
     }
   };
 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     if (!auth) {
-      toast.error("Auth service unavailable");
+      toast.error("Firebase keys missing in .env - Authentication requires Firebase");
       setLoading(false);
       return;
     }

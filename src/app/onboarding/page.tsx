@@ -68,30 +68,22 @@ export default function OnboardingPage() {
   const currentStepIndex = steps.indexOf(step);
 
   return (
-    <div className="onboarding-container" style={{ backgroundColor: "#fcfdff", minHeight: "100vh", padding: "2rem 1rem" }}>
-      <div style={{ maxWidth: "42rem", width: "100%", margin: "0 auto" }}>
+    <div className="onboarding-container min-h-screen bg-slate-50 py-10 lg:py-20 px-4">
+      <div className="max-w-3xl mx-auto">
         
         {/* Progress Header */}
-        <div style={{ textAlign: "center", marginBottom: "3rem" }}>
-          <div className="flex justify-center items-center gap-3 mb-6">
+        <div className="text-center mb-10 lg:mb-16">
+          <div className="flex justify-center items-center gap-2 lg:gap-4">
             {steps.map((s, i) => (
               <div key={s} className="flex items-center gap-2">
                 <div 
-                  className={`flex items-center justify-center font-bold text-xs transition-all`}
-                  style={{ 
-                    width: "2.25rem", 
-                    height: "2.25rem", 
-                    borderRadius: "50%", 
-                    backgroundColor: i <= currentStepIndex ? "#2563eb" : "white",
-                    color: i <= currentStepIndex ? "white" : "#94a3b8",
-                    border: i <= currentStepIndex ? "none" : "2px solid #e2e8f0",
-                    boxShadow: i === currentStepIndex ? "0 0 0 4px #dbeafe" : "none"
-                  }}
+                  className={`flex items-center justify-center font-bold text-xs transition-all w-8 h-8 lg:w-10 lg:h-10 rounded-full ${i <= currentStepIndex ? "bg-blue-600 text-white shadow-lg shadow-blue-100" : "bg-white text-slate-400 border-2 border-slate-100"}`}
+                  style={{ boxShadow: i === currentStepIndex ? "0 0 0 4px #dbeafe" : "" }}
                 >
                   {i < currentStepIndex ? <Check size={14} /> : i + 1}
                 </div>
                 {i < steps.length - 1 && (
-                  <div style={{ width: "2.5rem", height: "2px", backgroundColor: i < currentStepIndex ? "#2563eb" : "#e2e8f0" }} />
+                  <div className={`w-8 lg:w-12 h-0.5 rounded-full ${i < currentStepIndex ? "bg-blue-600" : "bg-slate-100"}`} />
                 )}
               </div>
             ))}
@@ -105,7 +97,7 @@ export default function OnboardingPage() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5, ease: "circOut" }}
-            className="premium-card p-8 lg:p-12"
+            className="premium-card p-6 lg:p-12"
           >
             {step === "role" && (
               <div className="flex-col gap-8">
@@ -215,33 +207,14 @@ function CategoryCard({ title, icon, selected, onClick }: any) {
   return (
     <div 
       onClick={onClick}
-      className={`category-card cursor-pointer transition-all ${selected ? "ring-4 ring-blue-100 border-blue-600 bg-blue-50" : "border-slate-100"}`}
-      style={{ 
-        padding: "2rem", 
-        display: "flex", 
-        flexDirection: "column", 
-        alignItems: "center", 
-        textAlign: "center",
-        borderRadius: "2rem",
-        borderWidth: "2px"
-      }}
+      className={`category-card group cursor-pointer transition-all p-4 lg:p-8 flex flex-col items-center text-center rounded-[1.5rem] lg:rounded-[2.5rem] border-2 ${selected ? "ring-4 ring-blue-100 border-blue-600 bg-blue-50" : "border-slate-100 bg-white hover:border-slate-200"}`}
     >
       <div 
-        style={{ 
-          width: "4rem",
-          height: "4rem",
-          borderRadius: "1.25rem",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          marginBottom: "1rem",
-          backgroundColor: selected ? "#2563eb" : "#eff6ff", 
-          color: selected ? "white" : "#2563eb" 
-        }}
+        className={`w-12 h-12 lg:w-20 lg:h-20 rounded-xl lg:rounded-3xl flex items-center justify-center mb-3 lg:mb-4 transition-colors ${selected ? "bg-blue-600 text-white" : "bg-blue-50 text-blue-600 group-hover:bg-blue-100"}`}
       >
-        {icon}
+        {React.cloneElement(icon as React.ReactElement, { size: typeof window !== 'undefined' && window.innerWidth < 1024 ? 24 : 32 })}
       </div>
-      <h3 className={`font-black text-sm tracking-tight ${selected ? "text-blue-600" : "text-slate-600"}`}>{title}</h3>
+      <h3 className={`font-black text-xs lg:text-sm tracking-tight ${selected ? "text-blue-600" : "text-slate-600"}`}>{title}</h3>
     </div>
   );
 }
