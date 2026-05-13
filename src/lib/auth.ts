@@ -77,21 +77,21 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = (user as any).id;
-        token.role = (user as any).role;
-        token.department = (user as any).department;
-        token.bio = (user as any).bio;
-        token.hospital = (user as any).hospital;
+        token.id = user.id;
+        token.role = user.role;
+        token.department = user.department;
+        token.bio = user.bio;
+        token.hospital = user.hospital;
       }
       return token;
     },
     async session({ session, token }) {
       if (session?.user) {
-        (session.user as any).id = token.id;
-        (session.user as any).role = token.role;
-        (session.user as any).department = token.department;
-        (session.user as any).bio = token.bio;
-        (session.user as any).hospital = token.hospital;
+        session.user.id = token.id;
+        session.user.role = token.role;
+        session.user.department = token.department;
+        session.user.bio = token.bio;
+        session.user.hospital = token.hospital;
       }
       return session;
     },

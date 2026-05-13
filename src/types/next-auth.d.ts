@@ -5,28 +5,28 @@ declare module "next-auth" {
   interface Session {
     user: {
       id: string
-      role?: string
-      department?: string
-      bio?: string
-      hospital?: string
+      role?: string | null
+      department?: string | null
+      bio?: string | null
+      hospital?: string | null
     } & DefaultSession["user"]
   }
 
   interface User {
     id: string
-    role?: string
-    department?: string
-    bio?: string
-    hospital?: string
+    role?: string | null
+    department?: string | null
+    bio?: string | null
+    hospital?: string | null
   }
 }
 
 declare module "next-auth/jwt" {
   interface JWT {
     id: string
-    role?: string
-    department?: string
-    bio?: string
-    hospital?: string
+    role?: string | null
+    department?: string | null
+    bio?: string | null
+    hospital?: string | null
   }
 }
