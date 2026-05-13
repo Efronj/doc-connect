@@ -25,21 +25,13 @@ export default function Home() {
     <main className="overflow-hidden" style={{ minHeight: "100vh", backgroundColor: "white" }}>
       {/* Hero Section */}
       <div className="relative flex-col items-center justify-center" style={{ display: "flex", minHeight: "100vh", padding: "1rem" }}>
-        {/* Animated Background Shapes */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.1, scale: 1 }}
-          transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
-          className="absolute"
-          style={{ top: "5rem", left: "2rem", width: "16rem", height: "16rem", background: "#60a5fa", borderRadius: "50%", filter: "blur(64px)" }}
-        />
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.1, scale: 1 }}
-          transition={{ duration: 2, delay: 1, repeat: Infinity, repeatType: "reverse" }}
-          className="absolute"
-          style={{ bottom: "5rem", right: "2rem", width: "20rem", height: "20rem", background: "#2563eb", borderRadius: "50%", filter: "blur(64px)" }}
-        />
+      {/* Premium Mesh Gradient Background */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-100/50 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[10%] right-[-5%] w-[50%] h-[50%] bg-blue-50/60 rounded-full blur-[100px]" />
+        <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-indigo-50/40 rounded-full blur-[80px]" />
+      </div>
+
 
         {/* Logo and Tagline */}
         <motion.div
@@ -48,14 +40,16 @@ export default function Home() {
           transition={{ duration: 0.8 }}
           className="text-center z-10"
         >
-          <div className="flex justify-center mb-6">
+          <div className="flex justify-center mb-8">
             <motion.div
-              animate={{ rotate: [0, 10, -10, 0] }}
-              transition={{ duration: 5, repeat: Infinity }}
-              className="icon-box shadow-xl"
-              style={{ width: "5rem", height: "5rem", padding: "1.25rem", borderRadius: "1.5rem" }}
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="relative p-1 bg-gradient-to-tr from-blue-600 to-indigo-400 rounded-[2rem] shadow-2xl shadow-blue-200"
             >
-              <Stethoscope size={40} color="white" />
+              <div className="bg-white/10 backdrop-blur-sm rounded-[1.8rem] p-5 border border-white/20">
+                <Stethoscope size={48} className="text-white drop-shadow-lg" />
+              </div>
+              <div className="absolute -inset-4 bg-blue-400/20 rounded-full blur-2xl -z-10 animate-pulse" />
             </motion.div>
           </div>
           
