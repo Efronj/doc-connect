@@ -116,57 +116,52 @@ export default function SearchPage() {
             key="discover"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="space-y-12"
+            className="space-y-16"
           >
+            {/* Discover Network Grid */}
             <div>
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-                  <TrendingUp size={28} className="text-blue-600" />
-                  Explore Network
-                </h2>
+              <div className="flex items-center gap-4 mb-10">
+                <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em]">Discover Network</span>
+                <div className="flex-1 h-px bg-slate-100" />
               </div>
-
+              
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                 <ExploreCategory Icon={BookOpen} title="Case Studies" count="1.2k new" color="bg-blue-50 text-blue-600" />
                 <ExploreCategory Icon={Users} title="Communities" count="450 groups" color="bg-emerald-50 text-emerald-600" />
-                <ExploreCategory Icon={Hash} title="Trending Tags" count="12 active" color="bg-violet-50 text-violet-600" />
-                <ExploreCategory Icon={Activity} title="Live Insights" count="85 online" color="bg-rose-50 text-rose-600" />
+                <ExploreCategory Icon={Hash} title="Trending Tags" count="#MedTwitter" color="bg-violet-50 text-violet-600" />
+                <ExploreCategory Icon={Activity} title="Job Board" count="85 openings" color="bg-rose-50 text-rose-600" />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Trending Tags & Network Stats */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
               <div className="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-sm relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-3xl -mr-16 -mt-16 opacity-50 transition-transform group-hover:scale-150" />
                 
                 <h3 className="font-black text-xl text-slate-900 mb-8 flex items-center justify-between relative z-10">
-                  Global Trends
+                  Trending Tags
                   <TrendingUp size={20} className="text-blue-600" />
                 </h3>
                 
                 <div className="space-y-4 relative z-10">
                   <TrendingTag tag="#EchocardiogramTips" posts="2.4k" />
+                  <TrendingTag tag="#MBBSMotivation" posts="1.8k" />
                   <TrendingTag tag="#SurgeryLife" posts="1.5k" />
                   <TrendingTag tag="#PrecisionMedicine" posts="950" />
-                  <TrendingTag tag="#MedicalEthics" posts="820" />
                 </div>
               </div>
 
-              <div className="bg-slate-900 rounded-[3rem] p-10 relative overflow-hidden flex flex-col justify-between group">
-                <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-600 rounded-full blur-[100px] opacity-20 -mr-32 -mb-32" />
-                
+              <div className="bg-blue-600 rounded-[3rem] p-10 relative overflow-hidden flex flex-col justify-center text-center group">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-[80px] -mr-32 -mt-32" />
                 <div className="relative z-10">
-                  <div className="w-14 h-14 bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center text-blue-400 mb-6">
-                    <ShieldCheck size={28} />
+                  <div className="w-16 h-16 bg-white/20 backdrop-blur-xl border border-white/20 rounded-2xl flex items-center justify-center text-white mx-auto mb-6">
+                    <ShieldCheck size={32} />
                   </div>
-                  <h3 className="text-3xl font-black text-white tracking-tight mb-3">Institutional Access</h3>
-                  <p className="text-slate-400 font-medium leading-relaxed mb-8">
-                    Connect your hospital credentials to access exclusive clinical research and verify your practitioner status.
+                  <h3 className="text-3xl font-black text-white tracking-tight mb-4 text-balance">Verified Network</h3>
+                  <p className="text-blue-100 font-medium leading-relaxed">
+                    Connect with <span className="text-white font-black">12,000+</span> verified medical practitioners globally.
                   </p>
                 </div>
-                
-                <Button className="w-full py-6 bg-white text-slate-900 hover:bg-blue-50 font-black rounded-2xl relative z-10 transition-transform group-hover:scale-[1.02]">
-                  Verify My Credentials
-                </Button>
               </div>
             </div>
           </motion.div>
