@@ -81,18 +81,20 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8 }}
-            className="flex flex-col-sm gap-4 justify-center"
+            className="mt-12 inline-block p-2 bg-blue-50/50 backdrop-blur-md rounded-[2.5rem] border border-blue-100 shadow-2xl shadow-blue-100/50"
           >
-            <Link href="/signup">
-              <button className="btn btn-primary" style={{ padding: "1rem 2rem", borderRadius: "9999px", fontSize: "1.125rem" }}>
-                Join Community
-              </button>
-            </Link>
-            <Link href="/login">
-              <button className="btn btn-outline" style={{ padding: "1rem 2rem", borderRadius: "9999px", fontSize: "1.125rem", backgroundColor: "white" }}>
-                Sign In
-              </button>
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Link href="/signup">
+                <button className="px-8 py-4 bg-blue-600 text-white font-black rounded-[2rem] hover:bg-blue-700 transition-all hover:scale-105 shadow-lg shadow-blue-200 active:scale-95 text-lg">
+                  Join Community
+                </button>
+              </Link>
+              <Link href="/login">
+                <button className="px-8 py-4 bg-white text-blue-600 font-black rounded-[2rem] hover:bg-slate-50 transition-all hover:scale-105 active:scale-95 text-lg">
+                  Login
+                </button>
+              </Link>
+            </div>
           </motion.div>
         </motion.div>
       </div>
