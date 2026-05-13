@@ -189,7 +189,7 @@ export default function LoginPage() {
             <div className="divider-line" />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Button 
               variant="outline" 
               className="py-4 rounded-2xl border-slate-200 hover:bg-slate-50" 
