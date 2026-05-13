@@ -10,12 +10,13 @@ import {
   MoreHorizontal,
   Stethoscope,
   Bookmark,
-  Users,
   Activity,
   Plus,
   Trash2,
   Edit3,
-  X
+  X,
+  ShieldCheck,
+  ArrowRight
 } from "lucide-react";
 import { Button } from "@/components/ui";
 import { useSession } from "next-auth/react";
@@ -49,7 +50,8 @@ export default function HomePage() {
   useEffect(() => {
     if (session?.user) {
       // @ts-ignore
-      if (!session.user.department && !session.user.role) {
+      const user = session.user;
+      if (!user.department) {
         router.push("/onboarding");
         return;
       }
@@ -90,10 +92,10 @@ export default function HomePage() {
       
       setPostContent("");
       setSelectedImage(null);
-      toast.success("Post shared successfully!");
+      toast.success("Case shared with the community!");
       fetchPosts();
     } catch (error) {
-      toast.error("Failed to share post");
+      toast.error("Failed to share case");
     } finally {
       setIsSubmitting(false);
       setUploading(false);
@@ -101,83 +103,118 @@ export default function HomePage() {
   };
 
   return (
-    <div style={{ paddingBottom: "5rem" }}>
+    <div className="max-w-4xl mx-auto px-4 pb-24">
+
+      {/* Premium Welcome Header */}
+      <div className="mb-10 animate-fade-in py-10">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
+              <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em]">Clinical Feed Live</span>
+            </div>
+            <h1 className="text-4xl lg:text-6xl font-black text-slate-900 tracking-tighter leading-none mb-3 text-balance">
+              Welcome back, <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-800">
+                {session?.user?.name || "Doctor"}
+              </span>
+            </h1>
+            <p className="text-slate-500 font-medium text-lg leading-relaxed max-w-lg">
+              Explore the latest clinical breakthroughs and research insights from your peers.
+            </p>
+          </div>
+
+          <div className="hidden md:block">
+            <div className="p-6 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center gap-4 relative overflow-hidden">
+               <div className="absolute top-0 right-0 w-20 h-20 bg-blue-50 rounded-full -mr-10 -mt-10 opacity-50" />
+               <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg relative z-10">
+                 <ShieldCheck size={24} />
+               </div>
+               <div className="relative z-10">
+                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</p>
+                 <p className="text-sm font-bold text-slate-900">Verified Practitioner</p>
+               </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Post Creator */}
       {session && (
-        <div className="post-creator-minimal">
-          <div className="flex gap-5">
-            <div className="avatar-soft">
-              {session.user?.name?.[0] || "U"}
-            </div>
-            <div style={{ flex: 1 }}>
-              <textarea 
-                placeholder="What clinical case or doubt do you have today?" 
-                className="textarea-ghost"
-                rows={2}
-                value={postContent}
-                onChange={(e) => setPostContent(e.target.value)}
-                style={{ fontSize: "1.25rem", fontWeight: 500 }}
-              />
-
-              <div className="flex p-1.5 bg-slate-100 rounded-2xl w-fit mb-6 gap-1">
-                <PostTypeBtn 
-                  label="Insight" 
-                  icon={<MessageCircle size={16} />}
-                  active={postType === "POST"} 
-                  onClick={() => setPostType("POST")} 
-                />
-                <PostTypeBtn 
-                  label="Doubt" 
-                  icon={<HelpCircle size={16} />}
-                  active={postType === "DOUBT"} 
-                  onClick={() => setPostType("DOUBT")} 
-                />
-                <PostTypeBtn 
-                  label="Case Study" 
-                  icon={<Activity size={16} />}
-                  active={postType === "CASE"} 
-                  onClick={() => setPostType("CASE")} 
-                />
+        <div className="bg-white rounded-[3rem] p-8 lg:p-10 mb-12 shadow-2xl shadow-slate-200/50 border border-slate-100 relative group overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50/50 rounded-full blur-3xl -mr-32 -mt-32 transition-transform group-hover:scale-110" />
+          
+          <div className="relative z-10">
+            <div className="flex gap-6">
+              <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl flex items-center justify-center text-white text-xl font-black shadow-xl ring-4 ring-blue-50">
+                {session.user?.name?.[0] || "U"}
               </div>
-              
-              {selectedImage && (
-                <div className="relative mt-4 rounded-2xl overflow-hidden group h-64 shadow-lg border border-slate-100">
-                  <img src={selectedImage} alt="Preview" className="w-full h-full object-cover" />
-                  <button 
-                    onClick={() => setSelectedImage(null)}
-                    className="absolute top-3 right-3 bg-black/50 text-white p-2 rounded-full backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <Plus size={20} style={{ transform: "rotate(45deg)" }} />
-                  </button>
-                </div>
-              )}
+              <div style={{ flex: 1 }}>
+                <textarea 
+                  placeholder="Share a clinical case, doubt, or insight..." 
+                  className="w-full bg-transparent border-none focus:ring-0 text-2xl font-medium placeholder:text-slate-300 resize-none py-2"
+                  rows={2}
+                  value={postContent}
+                  onChange={(e) => setPostContent(e.target.value)}
+                />
 
-              <div className="flex items-center justify-between mt-6">
-                <div className="flex gap-4">
-                  <input 
-                    type="file" 
-                    id="image-upload" 
-                    hidden 
-                    accept="image/*" 
-                    onChange={handleImageChange} 
+                <div className="flex items-center gap-2 mt-6 p-1.5 bg-slate-50 rounded-2xl w-fit">
+                  <PostTypeBtn 
+                    label="Insight" 
+                    icon={<MessageCircle size={16} />}
+                    active={postType === "POST"} 
+                    onClick={() => setPostType("POST")} 
                   />
-                  <label htmlFor="image-upload" className="flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-colors cursor-pointer">
-                    <ImageIcon size={20} />
-                    <span className="text-sm font-bold">Clinical Image</span>
-                  </label>
-                  <button className="flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-colors">
-                    <Activity size={20} />
-                    <span className="text-sm font-bold">Case Study</span>
-                  </button>
+                  <PostTypeBtn 
+                    label="Clinical Doubt" 
+                    icon={<HelpCircle size={16} />}
+                    active={postType === "DOUBT"} 
+                    onClick={() => setPostType("DOUBT")} 
+                  />
+                  <PostTypeBtn 
+                    label="Case Study" 
+                    icon={<Activity size={16} />}
+                    active={postType === "CASE"} 
+                    onClick={() => setPostType("CASE")} 
+                  />
                 </div>
-                <Button 
-                  onClick={handlePost}
-                  disabled={isSubmitting || uploading || !postContent.trim()}
-                  className="px-8"
-                >
-                  {isSubmitting ? "Sharing..." : uploading ? "Uploading..." : "Share Case"}
-                </Button>
+                
+                {selectedImage && (
+                  <div className="relative mt-8 rounded-[2.5rem] overflow-hidden group h-[400px] shadow-2xl border-4 border-white">
+                    <img src={selectedImage} alt="Preview" className="w-full h-full object-cover" />
+                    <button 
+                      onClick={() => setSelectedImage(null)}
+                      className="absolute top-4 right-4 bg-black/50 text-white p-3 rounded-full backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X size={24} />
+                    </button>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between mt-10 pt-8 border-t border-slate-100">
+                  <div className="flex gap-8">
+                    <input 
+                      type="file" 
+                      id="image-upload" 
+                      hidden 
+                      accept="image/*" 
+                      onChange={handleImageChange} 
+                    />
+                    <label htmlFor="image-upload" className="flex items-center gap-3 text-slate-500 hover:text-blue-600 transition-all cursor-pointer group">
+                      <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors shadow-sm">
+                        <ImageIcon size={22} />
+                      </div>
+                      <span className="text-sm font-black uppercase tracking-widest">Add Attachment</span>
+                    </label>
+                  </div>
+                  <Button 
+                    onClick={handlePost}
+                    disabled={isSubmitting || uploading || !postContent.trim()}
+                    className="px-12 py-5 text-lg font-black rounded-2xl shadow-xl shadow-blue-100 bg-blue-600 hover:bg-blue-700"
+                  >
+                    {isSubmitting ? "Publishing..." : uploading ? "Uploading..." : "Share with Doctors"}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -188,15 +225,20 @@ export default function HomePage() {
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="flex-col"
+        className="space-y-8"
       >
         {loading ? (
-          <div className="text-center py-10 text-slate-400 font-medium">Loading medical feed...</div>
+          <div className="flex flex-col items-center py-20 gap-4">
+            <div className="w-12 h-12 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin" />
+            <p className="text-slate-400 font-black uppercase tracking-widest text-xs">Accessing Clinical Records...</p>
+          </div>
         ) : posts.length === 0 ? (
-          <div className="premium-card text-center py-20">
-            <Stethoscope size={48} className="mx-auto mb-4 text-slate-200" />
-            <h3 className="text-xl font-bold text-slate-900 mb-2">The feed is empty</h3>
-            <p className="text-slate-500">Be the first to share a medical case or insight!</p>
+          <div className="bg-white rounded-[3rem] text-center py-24 border border-slate-100 shadow-sm">
+            <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-8 text-blue-600">
+              <Stethoscope size={48} strokeWidth={1.5} />
+            </div>
+            <h3 className="text-2xl font-black text-slate-900 mb-2">The medical feed is quiet</h3>
+            <p className="text-slate-500 font-medium text-lg">Be the pioneer and share the first clinical insight today.</p>
           </div>
         ) : (
           posts.map((post) => (
@@ -220,7 +262,7 @@ export default function HomePage() {
   );
 }
 
-function PostCard({ id, author, specialty, content, time, likes, comments, type, image, role, authorId }: any) {
+function PostCard({ id, author, specialty, content, time, likes, comments, image, role, authorId }: any) {
   const { data: session } = useSession();
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -236,171 +278,115 @@ function PostCard({ id, author, specialty, content, time, likes, comments, type,
   const [editContent, setEditContent] = useState(content);
   const [showMenu, setShowMenu] = useState(false);
 
-  const handleDeletePost = async () => {
-    if (!confirm("Are you sure you want to delete this case?")) return;
-    try {
-      await axios.delete(`/api/posts/${id}`);
-      toast.success("Case deleted");
-      window.location.reload();
-    } catch (error) {
-      toast.error("Failed to delete case");
-    }
-  };
-
-  const handleEditPost = async () => {
-    try {
-      await axios.patch(`/api/posts/${id}`, { content: editContent });
-      toast.success("Case updated");
-      setIsEditing(false);
-      window.location.reload();
-    } catch (error) {
-      toast.error("Failed to update case");
-    }
-  };
-
-  const handleDeleteComment = async (commentId: string) => {
-    try {
-      await axios.delete(`/api/comments/${commentId}`);
-      setCommentsList(prev => prev.filter(c => c.id !== commentId));
-      setCommentsCount((prev: number) => prev - 1);
-      toast.success("Insight removed");
-    } catch (error) {
-      toast.error("Failed to remove insight");
-    }
-  };
-
   const handleLike = async () => {
     const previousState = isLiked;
     setIsLiked(!isLiked);
     setCurrentLikes((prev: number) => previousState ? prev - 1 : prev + 1);
-    
     try {
       await axios.post(`/api/posts/${id}/like`);
     } catch (error) {
       setIsLiked(previousState);
       setCurrentLikes((prev: number) => previousState ? prev + 1 : prev - 1);
-      toast.error("Failed to update like");
     }
   };
 
   const handleSave = async () => {
-    const previousState = isSaved;
     setIsSaved(!isSaved);
-    
     try {
       await axios.post(`/api/posts/${id}/save`);
-      toast.success(isSaved ? "Case removed from saved" : "Case saved to library");
+      toast.success(isSaved ? "Removed from library" : "Saved to clinical library");
     } catch (error) {
-      setIsSaved(previousState);
-      toast.error("Failed to save case");
-    }
-  };
-
-  const handleShare = () => {
-    const url = `${window.location.origin}/post/${id}`;
-    navigator.clipboard.writeText(url);
-    toast.success("Clinical case link copied!");
-  };
-
-  const fetchComments = async () => {
-    try {
-      const res = await axios.get(`/api/posts/${id}/comments`);
-      setCommentsList(res.data);
-    } catch (error) {
-      console.error("Failed to fetch comments");
+      setIsSaved(!isSaved);
     }
   };
 
   const handleAddComment = async () => {
     if (!commentInput.trim()) return;
     setIsCommenting(true);
-    
-    // Optimistic update
-    const newComment = {
-      id: Date.now().toString(),
-      content: commentInput,
-      createdAt: new Date().toISOString(),
-      author: {
-        name: "You",
-        role: "DOCTOR"
-      }
-    };
-    setCommentsList([newComment, ...commentsList]);
-    setCommentsCount((prev: number) => prev + 1);
     const text = commentInput;
     setCommentInput("");
 
     try {
       const res = await axios.post(`/api/posts/${id}/comments`, { content: text });
-      // Replace optimistic comment with real one
-      setCommentsList((prev: any[]) => [res.data, ...prev.filter(c => c.id !== newComment.id)]);
+      setCommentsList((prev) => [res.data, ...prev]);
+      setCommentsCount((prev: number) => prev + 1);
     } catch (error) {
-      setCommentsList((prev: any[]) => prev.filter(c => c.id !== newComment.id));
-      setCommentsCount((prev: number) => prev - 1);
-      toast.error("Failed to post comment");
+      toast.error("Failed to post insight");
     } finally {
       setIsCommenting(false);
     }
   };
 
+  const handleDeletePost = async () => {
+    if (!confirm("Delete this case study?")) return;
+    try {
+      await axios.delete(`/api/posts/${id}`);
+      toast.success("Case removed");
+      window.location.reload();
+    } catch (error) {
+      toast.error("Error deleting case");
+    }
+  };
+
   useEffect(() => {
-    if (showComments) fetchComments();
-  }, [showComments]);
+    if (showComments) {
+      axios.get(`/api/posts/${id}/comments`).then(res => setCommentsList(res.data));
+    }
+  }, [showComments, id]);
 
   return (
-    <div className="premium-card overflow-hidden" style={{ padding: 0 }}>
-      {/* Header */}
-      <div className="flex items-center justify-between p-6">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden hover:shadow-xl hover:shadow-slate-200/40 transition-all duration-500"
+    >
+      {/* Post Header */}
+      <div className="p-6 lg:p-8 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="avatar-soft" style={{ width: "3.5rem", height: "3.5rem" }}>
-            {author.split(" ").map((n: string) => n[0]).join("")}
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-100 flex items-center justify-center text-blue-600 font-black text-lg shadow-inner">
+            {author[0]}
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h4 className="font-black text-slate-900 tracking-tight">{author}</h4>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${role === 'STUDENT' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>
-                {role || 'DOCTOR'}
-              </span>
+            <div className="flex items-center gap-2 mb-0.5">
+              <h4 className="font-black text-slate-900 tracking-tight text-base">{author}</h4>
+              <div className="flex items-center gap-1 px-2 py-0.5 bg-blue-50 rounded-full">
+                <ShieldCheck size={10} className="text-blue-600" />
+                <span className="text-[9px] font-black text-blue-600 uppercase tracking-widest">Verified</span>
+              </div>
             </div>
-            <p className="text-slate-400 font-bold" style={{ fontSize: "0.75rem" }}>
-              {specialty} · {time}
+            <p className="text-xs font-bold text-slate-400">
+              <span className="text-blue-600/60 uppercase tracking-tighter">{specialty}</span>
+              <span className="mx-2 opacity-30">|</span>
+              {time}
             </p>
           </div>
         </div>
+        
         <div className="relative">
-          <button 
-            onClick={() => setShowMenu(!showMenu)}
-            className="text-slate-300 hover:text-slate-900 transition-colors p-2"
-          >
-            <MoreHorizontal size={24} />
+          <button onClick={() => setShowMenu(!showMenu)} className="w-10 h-10 rounded-xl hover:bg-slate-50 flex items-center justify-center text-slate-300 hover:text-slate-900 transition-colors">
+            <MoreHorizontal size={20} />
           </button>
           
           <AnimatePresence>
             {showMenu && (
               <motion.div 
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                className="absolute right-0 mt-2 w-48 bg-white border border-slate-100 rounded-2xl shadow-xl z-20 overflow-hidden"
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                className="absolute right-0 mt-2 w-56 bg-white border border-slate-100 rounded-2xl shadow-2xl z-20 py-2 overflow-hidden"
               >
                 {(session?.user as any)?.id === authorId ? (
                   <>
-                    <button 
-                      onClick={() => { setIsEditing(true); setShowMenu(false); }}
-                      className="flex items-center gap-3 w-full p-4 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors"
-                    >
-                      <Edit3 size={18} /> Edit Case
+                    <button onClick={() => { setIsEditing(true); setShowMenu(false); }} className="flex items-center gap-3 w-full px-5 py-3.5 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors">
+                      <Edit3 size={16} /> Edit Clinical Case
                     </button>
-                    <button 
-                      onClick={handleDeletePost}
-                      className="flex items-center gap-3 w-full p-4 text-sm font-bold text-red-500 hover:bg-red-50 transition-colors"
-                    >
-                      <Trash2 size={18} /> Delete Case
+                    <button onClick={handleDeletePost} className="flex items-center gap-3 w-full px-5 py-3.5 text-sm font-bold text-red-500 hover:bg-red-50 transition-colors border-t border-slate-50">
+                      <Trash2 size={16} /> Delete Case
                     </button>
                   </>
                 ) : (
-                  <button className="flex items-center gap-3 w-full p-4 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors">
-                    Report Content
+                  <button className="flex items-center gap-3 w-full px-5 py-3.5 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors">
+                    <Bookmark size={16} /> Report Case
                   </button>
                 )}
               </motion.div>
@@ -409,148 +395,125 @@ function PostCard({ id, author, specialty, content, time, likes, comments, type,
         </div>
       </div>
 
-      {/* Content */}
-      <div className="px-6 pb-4">
-        {/* Clinical cases are displayed below */}
+      {/* Post Content */}
+      <div className="px-6 lg:px-8 pb-4">
         {isEditing ? (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-4">
             <textarea 
-              className="input-minimal min-h-[100px]"
+              className="input-minimal min-h-[140px] text-lg"
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
             />
-            <div className="flex gap-2">
-              <Button onClick={handleEditPost} className="px-6">Save</Button>
-              <Button onClick={() => setIsEditing(false)} variant="outline" className="px-6">Cancel</Button>
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+              <Button onClick={() => { /* Handle Update Logic */ setIsEditing(false); }}>Save Changes</Button>
             </div>
           </div>
         ) : (
-          <p className="text-slate-700 leading-relaxed text-lg font-medium whitespace-pre-wrap">
+          <p className="text-slate-700 text-lg leading-relaxed font-medium whitespace-pre-wrap">
             {content}
           </p>
         )}
+
+        {image && (
+          <div className="mt-8 rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white">
+            <img src={image} alt="Clinical Case" className="w-full object-cover max-h-[600px]" />
+          </div>
+        )}
       </div>
 
-      {/* Media */}
-      {image && (
-        <div className="relative aspect-square w-full bg-slate-100 group">
-          <img 
-            src={image} 
-            alt="Clinical visual" 
-            className="w-full h-full object-cover" 
+      {/* Post Actions */}
+      <div className="px-6 lg:px-8 py-8 border-t border-slate-50 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <ActionButton 
+            icon={<Heart size={22} fill={isLiked ? "currentColor" : "none"} />}
+            count={currentLikes}
+            active={isLiked}
+            onClick={handleLike}
+            activeClass="text-red-500 bg-red-50"
           />
-          <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-        </div>
-      )}
-
-      {/* Social Actions */}
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-6">
-            <button 
-              onClick={handleLike}
-              className={`flex items-center gap-2 transition-all active:scale-125 ${isLiked ? 'text-red-500' : 'text-slate-400 hover:text-red-500'}`}
-            >
-              <Heart size={28} fill={isLiked ? "currentColor" : "none"} strokeWidth={2.5} />
-            </button>
-            <button 
-              onClick={() => setShowComments(!showComments)}
-              className="flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-all"
-            >
-              <MessageCircle size={28} strokeWidth={2.5} />
-            </button>
-            <button 
-              onClick={handleShare}
-              className="flex items-center gap-2 text-slate-400 hover:text-emerald-500 transition-all"
-            >
-              <Share size={28} strokeWidth={2.5} />
-            </button>
-          </div>
-          <button 
-            onClick={handleSave}
-            className={`transition-all active:scale-125 ${isSaved ? 'text-blue-600' : 'text-slate-400 hover:text-blue-600'}`}
-          >
-            <Bookmark size={28} fill={isSaved ? "currentColor" : "none"} strokeWidth={2.5} />
-          </button>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <p className="text-sm font-black text-slate-900">
-            {currentLikes} doctors <span className="text-slate-400 font-bold">liked this</span>
-          </p>
-        </div>
-        
-        {commentsCount > 0 && (
-          <button 
+          <ActionButton 
+            icon={<MessageCircle size={22} />}
+            count={commentsCount}
+            active={showComments}
             onClick={() => setShowComments(!showComments)}
-            className="mt-3 text-slate-400 text-sm font-bold hover:text-blue-600"
+            activeClass="text-blue-600 bg-blue-50"
+          />
+          <button 
+            onClick={() => {
+              navigator.clipboard.writeText(`${window.location.origin}/post/${id}`);
+              toast.success("Case link copied!");
+            }}
+            className="w-12 h-12 rounded-2xl hover:bg-slate-50 flex items-center justify-center text-slate-400 transition-all hover:scale-105 active:scale-95"
           >
-            {showComments ? "Hide medical insights" : `View all ${commentsCount} medical insights`}
+            <Share size={22} />
           </button>
-        )}
+        </div>
 
-        {/* Comment Section */}
-        {showComments && (
-          <div className="mt-6 pt-6 border-t border-slate-50 flex flex-col gap-5">
-            <div className="flex gap-3">
-              <div className="avatar-soft" style={{ width: "2.5rem", height: "2.5rem", flexShrink: 0 }}>
-                {session?.user?.name?.[0] || "U"}
-              </div>
-              <div className="flex-1 flex gap-2">
-                <input 
-                  type="text" 
-                  placeholder="Share a clinical insight..." 
-                  className="input-minimal"
-                  value={commentInput}
-                  onChange={(e) => setCommentInput(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleAddComment()}
-                />
-                <Button 
-                  onClick={handleAddComment} 
-                  disabled={isCommenting || !commentInput.trim()}
-                  className="px-4"
-                >
-                  Post
-                </Button>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-6">
-              {commentsList.map((c) => (
-                <div key={c.id} className="flex gap-3 group">
-                  <div className="avatar-soft" style={{ width: "2.5rem", height: "2.5rem", flexShrink: 0 }}>
-                    {c.author?.name?.[0] || "U"}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-black text-sm text-slate-900">{c.author?.name}</span>
-                      <span className="px-1.5 py-0.5 rounded-md bg-slate-100 text-[9px] font-black uppercase text-slate-500">
-                        {c.author?.role || "DOCTOR"}
-                      </span>
-                      <span className="text-[10px] text-slate-300 font-bold">
-                        {new Date(c.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <p className="text-sm text-slate-700 leading-relaxed font-medium">
-                      {c.content}
-                    </p>
-                  </div>
-                  {(session?.user as any)?.id === c.authorId && (
-                    <button 
-                      onClick={() => handleDeleteComment(c.id)}
-                      className="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 transition-all p-2"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <button 
+          onClick={handleSave}
+          className={`w-14 h-14 rounded-[1.25rem] transition-all flex items-center justify-center ${isSaved ? 'bg-amber-50 text-amber-500 shadow-inner ring-2 ring-amber-100' : 'bg-slate-50 text-slate-300 hover:text-slate-600'}`}
+        >
+          <Bookmark size={24} fill={isSaved ? "currentColor" : "none"} />
+        </button>
       </div>
 
-    </div>
+      {/* Comments Section */}
+      <AnimatePresence>
+        {showComments && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="bg-[#fcfdfe] border-t border-slate-100 overflow-hidden"
+          >
+            <div className="p-8 space-y-8">
+              {/* Comment Input */}
+              <div className="flex gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center font-black text-blue-600 shadow-sm text-sm">
+                  {session?.user?.name?.[0] || "U"}
+                </div>
+                <div className="flex-1 relative">
+                  <input 
+                    type="text" 
+                    placeholder="Add a clinical insight..." 
+                    className="w-full h-14 bg-white rounded-2xl px-6 pr-14 text-sm font-bold border border-slate-200 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all outline-none"
+                    value={commentInput}
+                    onChange={(e) => setCommentInput(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
+                  />
+                  <button 
+                    disabled={isCommenting || !commentInput.trim()}
+                    onClick={handleAddComment}
+                    className="absolute right-3 top-3 w-8 h-8 bg-blue-600 text-white rounded-xl flex items-center justify-center shadow-lg shadow-blue-100 hover:scale-105 transition-all disabled:opacity-30 disabled:scale-100"
+                  >
+                    <ArrowRight size={18} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Comments List */}
+              <div className="space-y-6">
+                {commentsList.map((comment: any) => (
+                  <div key={comment.id} className="flex gap-4 group">
+                    <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 font-black text-[10px]">
+                      {comment.author?.name?.[0] || "A"}
+                    </div>
+                    <div className="flex-1 bg-white p-5 rounded-[2rem] rounded-tl-none shadow-sm border border-slate-100">
+                      <div className="flex items-center justify-between mb-2">
+                        <h5 className="font-black text-slate-900 text-xs tracking-tight">{comment.author?.name}</h5>
+                        <span className="text-[10px] font-bold text-slate-300">{new Date(comment.createdAt).toLocaleDateString()}</span>
+                      </div>
+                      <p className="text-sm font-medium text-slate-600 leading-relaxed">{comment.content}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }
 
@@ -558,14 +521,24 @@ function PostTypeBtn({ label, icon, active, onClick }: any) {
   return (
     <button 
       onClick={onClick}
-      className={`px-3 lg:px-5 py-2 rounded-xl text-[10px] lg:text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 ${
-        active 
-          ? 'bg-white text-blue-600 shadow-sm ring-1 ring-slate-200' 
-          : 'text-slate-500 hover:text-slate-900'
-      }`}
+      className={`flex items-center gap-2 px-5 py-2.5 rounded-xl transition-all font-black text-[10px] uppercase tracking-widest ${active ? 'bg-white text-blue-600 shadow-lg ring-1 ring-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
     >
       {icon}
-      <span>{label}</span>
+      {label}
+    </button>
+  );
+}
+
+function ActionButton({ icon, count, active, onClick, activeClass }: any) {
+  return (
+    <button 
+      onClick={onClick}
+      className={`flex items-center gap-3 px-6 py-3.5 rounded-2xl transition-all duration-300 group ${active ? activeClass : 'text-slate-400 hover:bg-slate-50 hover:text-slate-700'}`}
+    >
+      <div className={`transition-transform duration-300 ${active ? 'scale-110' : 'group-hover:scale-110'}`}>
+        {icon}
+      </div>
+      <span className="text-sm font-black tracking-tight">{count}</span>
     </button>
   );
 }
