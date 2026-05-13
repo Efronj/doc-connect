@@ -15,7 +15,7 @@
 /* Base resets and fonts */
 @layer base {
   body {
-    @apply antialiased bg-white text-slate-900;
+    @apply antialiased bg-white text-slate-900 overflow-x-hidden;
     font-family: 'Inter', system-ui, sans-serif;
   }
 }
@@ -108,7 +108,9 @@
 }
 
 .mobile-bottom-nav {
-  @apply fixed bottom-0 left-0 right-0 h-20 bg-white/90 backdrop-blur-xl border-t border-slate-100 flex justify-around items-center z-50 lg:hidden;
+  @apply fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-100 flex justify-around items-center z-50 lg:hidden;
+  padding-bottom: env(safe-area-inset-bottom);
+  height: calc(5rem + env(safe-area-inset-bottom));
 }
 
  /* Mobile Specific Refinements */
@@ -156,13 +158,14 @@
   }
 
   .auth-form-container {
-    padding: 0 !important;
+    padding: 2rem 1.25rem !important;
     background-color: white !important;
     width: 100% !important;
+    display: block !important;
   }
 
   .auth-card {
-    padding: 2.5rem 1.25rem !important;
+    padding: 0 !important;
     box-shadow: none !important;
     border-radius: 0 !important;
     width: 100% !important;
