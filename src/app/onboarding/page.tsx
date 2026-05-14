@@ -63,7 +63,7 @@ export default function OnboardingPage() {
       await axios.patch("/api/user/update", formData);
       await update();
       toast.success("Professional identity verified!");
-      router.push("/home");
+      window.location.href = "/home";
     } catch (error) {
       toast.error("Failed to save profile");
     } finally {
