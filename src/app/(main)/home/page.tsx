@@ -103,37 +103,17 @@ export default function HomePage() {
   return (
     <div className="max-w-4xl mx-auto px-4 pb-24">
 
-      {/* Premium Welcome Header */}
-      <div className="mb-10 animate-fade-in py-10">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
-              <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em]">Clinical Feed Live</span>
+      <div className="pt-12 pb-8 flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-black text-slate-900 tracking-tight">Clinical Feed</h2>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Latest Insights</p>
+        </div>
+        <div className="flex -space-x-2">
+          {[1,2,3].map(i => (
+            <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[10px] font-black text-blue-600">
+              {i === 3 ? "+12" : "D"}
             </div>
-            <h1 className="text-4xl lg:text-6xl font-black text-slate-900 tracking-tighter leading-none mb-3 text-balance">
-              Welcome back, <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-800">
-                {session?.user?.name || "Doctor"}
-              </span>
-            </h1>
-            <p className="text-slate-500 font-medium text-lg leading-relaxed max-w-lg">
-              Explore the latest clinical breakthroughs and research insights from your peers.
-            </p>
-          </div>
-
-          <div className="hidden md:block">
-            <div className="p-6 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center gap-4 relative overflow-hidden">
-               <div className="absolute top-0 right-0 w-20 h-20 bg-blue-50 rounded-full -mr-10 -mt-10 opacity-50" />
-               <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg relative z-10">
-                 <ShieldCheck size={24} />
-               </div>
-               <div className="relative z-10">
-                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</p>
-                 <p className="text-sm font-bold text-slate-900">Verified Practitioner</p>
-               </div>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
