@@ -6,8 +6,11 @@ export default withAuth(
     const token = req.nextauth.token;
     const isAuth = !!token;
     const isOnboardingPage = req.nextUrl.pathname.startsWith("/onboarding");
+    
+    console.log(`[PROXY] Path: ${req.nextUrl.pathname}, Auth: ${isAuth}, Dept: ${token?.department}`);
 
     if (isAuth && !token.department && !isOnboardingPage) {
+      console.log(`[PROXY] Redirecting to onboarding...`);
       return NextResponse.redirect(new URL("/onboarding", req.url));
     }
 

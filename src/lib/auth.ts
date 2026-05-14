@@ -85,14 +85,18 @@ export const authOptions: NextAuthOptions = {
       }
 
       if (trigger === "update") {
+        console.log(`[AUTH] Trigger update for ID: ${token.id}`);
         const dbUser = await prisma.user.findUnique({
           where: { id: token.id as string }
         });
         if (dbUser) {
+          console.log(`[AUTH] Found user in DB: ${dbUser.name}, Dept: ${dbUser.department}`);
           token.role = dbUser.role;
           token.department = dbUser.department;
           token.bio = dbUser.bio;
           token.hospital = dbUser.hospital;
+        } else {
+          console.log(`[AUTH] User NOT found in DB for update!`);
         }
       }
       
