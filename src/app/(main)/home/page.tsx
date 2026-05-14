@@ -325,10 +325,12 @@ function PostCard({ id, author, specialty, content, time, likes, comments, image
             {author[0]}
           </div>
           <div>
-              <span className="text-blue-600/60 uppercase tracking-tighter">{specialty}</span>
-              <span className="mx-2 opacity-30">|</span>
-              {time}
-            </p>
+            <h4 className="font-bold text-sm text-slate-900">{author.name}</h4>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold text-blue-600/60 uppercase tracking-tighter">{author.role || "Doctor"}</span>
+              <span className="mx-1 opacity-30 text-[10px]">|</span>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{new Date(createdAt).toLocaleDateString()}</span>
+            </div>
           </div>
         </div>
         
