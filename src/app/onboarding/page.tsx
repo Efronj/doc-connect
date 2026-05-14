@@ -21,6 +21,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { useSession } from "next-auth/react";
 
 type Step = "welcome" | "role" | "department" | "bio";
 
@@ -39,6 +40,7 @@ const DEPARTMENTS = [
 ];
 
 export default function OnboardingPage() {
+  const { update } = useSession();
   const [step, setStep] = useState<Step>("welcome");
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -59,6 +61,7 @@ export default function OnboardingPage() {
     setLoading(true);
     try {
       await axios.patch("/api/user/update", formData);
+      await update();
       toast.success("Professional identity verified!");
       router.push("/home");
     } catch (error) {
