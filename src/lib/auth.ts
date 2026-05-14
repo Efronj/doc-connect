@@ -75,7 +75,7 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
         token.id = user.id;
         token.role = user.role;
@@ -83,6 +83,19 @@ export const authOptions: NextAuthOptions = {
         token.bio = user.bio;
         token.hospital = user.hospital;
       }
+
+      if (trigger === "update") {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string }
+        });
+        if (dbUser) {
+          token.role = dbUser.role;
+          token.department = dbUser.department;
+          token.bio = dbUser.bio;
+          token.hospital = dbUser.hospital;
+        }
+      }
+      
       return token;
     },
     async session({ session, token }) {
