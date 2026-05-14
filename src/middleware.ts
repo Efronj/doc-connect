@@ -3,10 +3,9 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export default async function middleware(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const token = await getToken({ req }); // Let next-auth find the secret
   const isAuth = !!token;
   const { pathname } = req.nextUrl;
-  const isOnboardingPage = pathname.startsWith("/onboarding");
   const isLoginPage = pathname.startsWith("/login");
   const isSignupPage = pathname.startsWith("/signup");
   const isForgotPasswordPage = pathname.startsWith("/forgot-password");
@@ -20,6 +19,7 @@ export default async function middleware(req: NextRequest) {
   }
 
   // 2. If authenticated but missing department and not on onboarding -> Onboarding
+  const isOnboardingPage = pathname.startsWith("/onboarding");
   if (isAuth && !token?.department && !isOnboardingPage) {
     console.log(`[MIDDLEWARE] Auth but no department, redirecting to onboarding...`);
     return NextResponse.redirect(new URL("/onboarding", req.url));
