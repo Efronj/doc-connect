@@ -103,10 +103,10 @@ export default function HomePage() {
   return (
     <div className="max-w-4xl mx-auto px-4 pb-24">
 
-      <div className="pt-12 pb-8 flex items-center justify-between">
+      <div className="pt-10 pb-6 flex items-center justify-between border-b border-slate-50 mb-8">
         <div>
-          <h2 className="text-2xl font-black text-slate-900 tracking-tight">Clinical Feed</h2>
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Latest Insights</p>
+          <h2 className="text-xl font-black text-slate-900 tracking-tight">Clinical Feed</h2>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Latest Insights</p>
         </div>
         <div className="flex -space-x-2">
           {[1,2,3].map(i => (
@@ -316,23 +316,15 @@ function PostCard({ id, author, specialty, content, time, likes, comments, image
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden hover:shadow-xl hover:shadow-slate-200/40 transition-all duration-500"
+      className="bg-white rounded-[2rem] border-2 border-slate-50 p-6 shadow-sm hover:border-blue-100/50 transition-all duration-300"
     >
       {/* Post Header */}
-      <div className="p-6 lg:p-8 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-100 flex items-center justify-center text-blue-600 font-black text-lg shadow-inner">
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-blue-600 font-black text-sm">
             {author[0]}
           </div>
           <div>
-            <div className="flex items-center gap-2 mb-0.5">
-              <h4 className="font-black text-slate-900 tracking-tight text-base">{author}</h4>
-              <div className="flex items-center gap-1 px-2 py-0.5 bg-blue-50 rounded-full">
-                <ShieldCheck size={10} className="text-blue-600" />
-                <span className="text-[9px] font-black text-blue-600 uppercase tracking-widest">Verified</span>
-              </div>
-            </div>
-            <p className="text-xs font-bold text-slate-400">
               <span className="text-blue-600/60 uppercase tracking-tighter">{specialty}</span>
               <span className="mx-2 opacity-30">|</span>
               {time}
@@ -374,44 +366,44 @@ function PostCard({ id, author, specialty, content, time, likes, comments, image
       </div>
 
       {/* Post Content */}
-      <div className="px-6 lg:px-8 pb-4">
+      <div className="px-5 lg:px-6 pb-4">
         {isEditing ? (
           <div className="flex flex-col gap-4">
             <textarea 
-              className="input-minimal min-h-[140px] text-lg"
+              className="input-minimal min-h-[120px] text-base"
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
             />
             <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
-              <Button onClick={() => { /* Handle Update Logic */ setIsEditing(false); }}>Save Changes</Button>
+              <Button variant="outline" size="sm" onClick={() => setIsEditing(false)}>Cancel</Button>
+              <Button size="sm" onClick={() => { /* Handle Update Logic */ setIsEditing(false); }}>Save</Button>
             </div>
           </div>
         ) : (
-          <p className="text-slate-700 text-lg leading-relaxed font-medium whitespace-pre-wrap">
+          <p className="text-slate-700 text-base leading-relaxed font-medium whitespace-pre-wrap">
             {content}
           </p>
         )}
 
         {image && (
-          <div className="mt-8 rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white">
-            <img src={image} alt="Clinical Case" className="w-full object-cover max-h-[600px]" />
+          <div className="mt-6 rounded-[1.5rem] overflow-hidden shadow-lg border-2 border-white">
+            <img src={image} alt="Clinical Case" className="w-full object-cover max-h-[500px]" />
           </div>
         )}
       </div>
 
       {/* Post Actions */}
-      <div className="px-6 lg:px-8 py-8 border-t border-slate-50 flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      <div className="px-5 lg:px-6 py-6 border-t border-slate-50 flex items-center justify-between">
+        <div className="flex items-center gap-3">
           <ActionButton 
-            icon={<Heart size={22} fill={isLiked ? "currentColor" : "none"} />}
+            icon={<Heart size={20} fill={isLiked ? "currentColor" : "none"} />}
             count={currentLikes}
             active={isLiked}
             onClick={handleLike}
             activeClass="text-red-500 bg-red-50"
           />
           <ActionButton 
-            icon={<MessageCircle size={22} />}
+            icon={<MessageCircle size={20} />}
             count={commentsCount}
             active={showComments}
             onClick={() => setShowComments(!showComments)}
@@ -422,17 +414,17 @@ function PostCard({ id, author, specialty, content, time, likes, comments, image
               navigator.clipboard.writeText(`${window.location.origin}/post/${id}`);
               toast.success("Case link copied!");
             }}
-            className="w-12 h-12 rounded-2xl hover:bg-slate-50 flex items-center justify-center text-slate-400 transition-all hover:scale-105 active:scale-95"
+            className="w-10 h-10 rounded-xl hover:bg-slate-50 flex items-center justify-center text-slate-400 transition-all"
           >
-            <Share size={22} />
+            <Share size={20} />
           </button>
         </div>
 
         <button 
           onClick={handleSave}
-          className={`w-14 h-14 rounded-[1.25rem] transition-all flex items-center justify-center ${isSaved ? 'bg-amber-50 text-amber-500 shadow-inner ring-2 ring-amber-100' : 'bg-slate-50 text-slate-300 hover:text-slate-600'}`}
+          className={`w-12 h-12 rounded-xl transition-all flex items-center justify-center ${isSaved ? 'bg-amber-50 text-amber-500 shadow-inner ring-2 ring-amber-100' : 'bg-slate-50 text-slate-300 hover:text-slate-600'}`}
         >
-          <Bookmark size={24} fill={isSaved ? "currentColor" : "none"} />
+          <Bookmark size={20} fill={isSaved ? "currentColor" : "none"} />
         </button>
       </div>
 
