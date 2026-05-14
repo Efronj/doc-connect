@@ -119,24 +119,24 @@ export default function HomePage() {
 
       {/* Post Creator */}
       {session && (
-        <div className="bg-white rounded-[3rem] p-8 lg:p-10 mb-12 shadow-2xl shadow-slate-200/50 border border-slate-100 relative group overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50/50 rounded-full blur-3xl -mr-32 -mt-32 transition-transform group-hover:scale-110" />
+        <div className="bg-white rounded-[2rem] p-6 lg:p-8 mb-10 shadow-xl shadow-slate-200/40 border border-slate-100 relative group overflow-hidden">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-blue-50/30 rounded-full blur-3xl -mr-24 -mt-24 transition-transform group-hover:scale-110" />
           
           <div className="relative z-10">
-            <div className="flex gap-6">
-              <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl flex items-center justify-center text-white text-xl font-black shadow-xl ring-4 ring-blue-50">
+            <div className="flex gap-5">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center text-white text-lg font-black shadow-lg ring-4 ring-blue-50/50">
                 {session.user?.name?.[0] || "U"}
               </div>
               <div style={{ flex: 1 }}>
                 <textarea 
                   placeholder="Share a clinical case, doubt, or insight..." 
-                  className="w-full bg-transparent border-none focus:ring-0 text-2xl font-medium placeholder:text-slate-300 resize-none py-2"
+                  className="w-full bg-transparent border-none focus:ring-0 text-xl font-medium placeholder:text-slate-300 resize-none py-1"
                   rows={2}
                   value={postContent}
                   onChange={(e) => setPostContent(e.target.value)}
                 />
 
-                <div className="flex items-center gap-2 mt-6 p-1.5 bg-slate-50 rounded-2xl w-fit">
+                <div className="flex items-center gap-2 mt-4 p-1 bg-slate-50/50 rounded-xl w-fit border border-slate-100">
                   <PostTypeBtn 
                     label="Insight" 
                     icon={<MessageCircle size={16} />}
@@ -169,8 +169,8 @@ export default function HomePage() {
                   </div>
                 )}
 
-                <div className="flex items-center justify-between mt-10 pt-8 border-t border-slate-100">
-                  <div className="flex gap-8">
+                <div className="flex items-center justify-between mt-8 pt-6 border-t border-slate-100">
+                  <div className="flex gap-6">
                     <input 
                       type="file" 
                       id="image-upload" 
@@ -178,17 +178,17 @@ export default function HomePage() {
                       accept="image/*" 
                       onChange={handleImageChange} 
                     />
-                    <label htmlFor="image-upload" className="flex items-center gap-3 text-slate-500 hover:text-blue-600 transition-all cursor-pointer group">
-                      <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors shadow-sm">
-                        <ImageIcon size={22} />
+                    <label htmlFor="image-upload" className="flex items-center gap-2 text-slate-500 hover:text-blue-600 transition-all cursor-pointer group">
+                      <div className="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors border border-slate-100">
+                        <ImageIcon size={18} />
                       </div>
-                      <span className="text-sm font-black uppercase tracking-widest">Add Attachment</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest">Attachment</span>
                     </label>
                   </div>
                   <Button 
                     onClick={handlePost}
                     disabled={isSubmitting || uploading || !postContent.trim()}
-                    className="px-12 py-5 text-lg font-black rounded-2xl shadow-xl shadow-blue-100 bg-blue-600 hover:bg-blue-700"
+                    className="px-8 py-3 text-sm font-black rounded-xl shadow-lg shadow-blue-100 bg-blue-600 hover:bg-blue-700"
                   >
                     {isSubmitting ? "Publishing..." : uploading ? "Uploading..." : "Share with Doctors"}
                   </Button>
@@ -499,7 +499,7 @@ function PostTypeBtn({ label, icon, active, onClick }: any) {
   return (
     <button 
       onClick={onClick}
-      className={`flex items-center gap-2 px-5 py-2.5 rounded-xl transition-all font-black text-[10px] uppercase tracking-widest ${active ? 'bg-white text-blue-600 shadow-lg ring-1 ring-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
+      className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all font-black text-[10px] uppercase tracking-widest border-2 ${active ? 'bg-blue-50 border-blue-600 text-blue-600 shadow-sm' : 'border-transparent text-slate-400 hover:text-slate-600 hover:bg-slate-50'}`}
     >
       {icon}
       {label}
